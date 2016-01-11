@@ -6,7 +6,7 @@
 
 (defn update! [delta]
   (let []
-    (swap! game-state update-in [:player :food] + 0.1)))
+    (swap! game-state update-in [:player :food] #(Math/round (+ % 0.1)))))
 
 (defn update-game-loop! [ts]
   (when (:running? @game-state)

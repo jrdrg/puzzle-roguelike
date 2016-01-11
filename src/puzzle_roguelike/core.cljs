@@ -3,14 +3,14 @@
             [cljs.core.async :as async :refer [<! >! put! chan]]
             [puzzle-roguelike.state :as state :refer [game-state]]
             [puzzle-roguelike.map :as map]
-            [puzzle-roguelike.animations :as animations])
+            [puzzle-roguelike.animations :as animations]
+            [puzzle-roguelike.components :as cmp :refer [tile-size]])
   (:require-macros [cljs.core.async.macros :as am :refer [go-loop]]))
 
 (enable-console-print!)
 
 (def events-chan (chan))
 
-(def tile-size 50)
 
 (defn initialize! []
   (reset! game-state (state/get-new-state)))
@@ -54,43 +54,7 @@
       (recur))))
 
 
-;; Components
-(defn tile-view [tile x y]
-  [:div.tile.noselect {:style {:background (:background tile)
-                               :color "antiquewhite"
-                               :top (* y tile-size)
-                               :left (* x tile-size)
-                               :height tile-size
-                               :width tile-size}
-                       :on-click #(async/put! events-chan {:type :move :position [x y]})}
-   (:symbol tile)])
 
-(defn player-view [[pos-x pos-y]]
-  [:div.player.tile.noselect {:style {:top pos-y
-                                      :left pos-x
-                                      :width tile-size
-                                      :height tile-size}}
-   "@"])
-
-(defn map-view [tiles position]
-  (let [[width height] map/map-size]
-    [:div.map {:style {:height (* tile-size height) :width (* tile-size width) :flex-basis (* tile-size width)}}
-     (for [y (range height) x (range width)
-           :let [tile (map/get-tile-at tiles x y)]]
-       ^{:key (str x ":" y)} [tile-view tile x y])
-       [player-view position]
-     ]))
-
-(defn stats-view [player]
-  (let []
-    [:div.stats
-     [:div (str "hp: " (:hp player))]
-     [:div (str "atk: " (:atk player))]
-     [:div (str "def: " (:def player))]
-     [:div (str "food: " (:food player))]
-     [:div (str "xp: " (:xp player))]
-     [:div (str "gold: " (:gold player))]
-     ]))
 
 (defn game-container []
   (run-event-loop events-chan)
@@ -100,8 +64,8 @@
           tiles (:tiles @game-state)
           position (:position @game-state)]
       [:div.container
-       [map-view tiles position]
-       [stats-view player]
+       [cmp/map-view tiles position events-chan]
+       [cmp/stats-view player]
        [:button {:on-click #(initialize!)} "Reset map"]
        ])))
 
