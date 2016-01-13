@@ -1,6 +1,7 @@
 (ns puzzle-roguelike.components
   (:require [cljs.core.async :as async :refer [put!]]
-            [puzzle-roguelike.map :as map]))
+            [puzzle-roguelike.map :as map])
+  (:require-macros [puzzle-roguelike.macros :as rm :refer [handler-fn]]))
 
 (def tile-size 50)
 
@@ -13,7 +14,7 @@
                                :left (* x tile-size)
                                :height tile-size
                                :width tile-size}
-                       :on-click #(put! out-chan {:type :move :position [x y]})}
+                       :on-click (handler-fn (put! out-chan {:type :move :position [x y]}))}
    (:symbol tile)])
 
 (defn player-view [[pos-x pos-y]]

@@ -5,12 +5,12 @@
             [puzzle-roguelike.map :as map]
             [puzzle-roguelike.animations :as animations]
             [puzzle-roguelike.components :as cmp :refer [tile-size]])
-  (:require-macros [cljs.core.async.macros :as am :refer [go-loop]]))
+  (:require-macros [cljs.core.async.macros :as am :refer [go-loop]]
+                   [puzzle-roguelike.macros :as rm :refer [handler-fn]]))
 
 (enable-console-print!)
 
 (def events-chan (chan))
-
 
 (defn initialize! []
   (reset! game-state (state/get-new-state)))
@@ -66,7 +66,7 @@
       [:div.container
        [cmp/map-view tiles position events-chan]
        [cmp/stats-view player]
-       [:button {:on-click #(initialize!)} "Reset map"]
+       [:button {:on-click (handler-fn (initialize!))} "Reset map"]
        ])))
 
 
