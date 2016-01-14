@@ -16,6 +16,10 @@
   (reset! game-state (state/get-new-state)))
 
 
+(defn display-message [state message]
+  (update-in state [:messages] conj message))
+
+
 (defn subtract-food
   "Subtracts the amount of food from the current player state"
   [state amount]
@@ -30,8 +34,9 @@
     (if (map/valid-move? x y tile-pos)
       (-> 
        (assoc state :position [(* tile-size x) (* tile-size y)])
-       (subtract-food 1))
-      state)))
+       (subtract-food 1)
+       (display-message (str "Moved to " x ", " y)))
+      (display-message state (str "Can't move there!")))))
 
 
 (defmulti dispatch-event #(:type %))
@@ -62,10 +67,14 @@
   (fn []
     (let [player (:player @game-state)
           tiles (:tiles @game-state)
-          position (:position @game-state)]
+          position (:position @game-state)
+          messages (take 8 (:messages @game-state))]
       [:div.container
-       [cmp/map-view tiles position events-chan]
-       [cmp/stats-view player]
+       [:div.title "this game has no title"]
+       [:div.game-wrapper
+        [cmp/map-view tiles position events-chan]
+        [cmp/stats-view player]]
+       [cmp/message-log messages]
        [:button {:on-click (handler-fn (initialize!))} "Reset map"]
        ])))
 

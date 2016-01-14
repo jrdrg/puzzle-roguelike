@@ -4,10 +4,12 @@
 (def map-size [10 10])
 
 
-(def tile-data [[:bounds "X"  "red"    0]
-                [:empty  "."  "black"  8]  ;normal movement, 1 food
-                [:water  "~"  "blue"   1]  ;maybe can't cross? not sure yet
-                [:rocks  "*"  "gray"   2]  ;2 food
+(def tile-data [[:bounds      "X"  "red"    0]
+                [:stairs-down ">"  "white"  0]
+                [:stairs-up   "<"  "white"  0]
+                [:empty       "."  "black"  8]  ;normal movement, 1 food
+                [:water       "~"  "blue"   1]  ;maybe can't cross? not sure yet
+                [:rocks       "*"  "gray"   2]  ;2 food
                 ])
 
 (def entity-data [[:coin  "$"  "yellow"  6]
@@ -18,17 +20,27 @@
                  [:snake  "s"  "green"     2  10  {:poison 2}]])
 
 
+(def tile-keys [:key :symbol :background :weight])
+(def enemy-keys [:key :symbol :color :level :hp :effect])
+
+
 (defrecord Tile [key symbol background weight])
 (defrecord Enemy [key symbol color level hp effect])
 
+(defn tile-map
+  []
+  (map #(into (hash-map) (vec (map vector tile-keys %))) tile-data))
 
-(defn get-enemy-records []
+(defn get-enemy-records
+  []
   (map #(apply ->Enemy %) enemy-data))
 
-(defn get-tile-records []
+(defn get-tile-records
+  []
   (map #(apply ->Tile %) tile-data))
 
-(defn get-random-tile [tiles]
+(defn get-random-tile
+  [tiles]
   (let [weights (rest (reductions #(+ %1 (:weight %2)) 0 tiles))
         rand (rand-int (last weights))]
     (nth tiles (count (take-while #(<= % rand) weights)))))
@@ -36,8 +48,9 @@
 (defn get-random-map
   "Returns a random map"
   [tiles]
-  (let [[width height] map-size
-        random-tile #(get-random-tile tiles)
+  (let [tiles-without-stairs (-> tiles rest rest rest)
+        [width height] map-size
+        random-tile #(get-random-tile tiles-without-stairs)
         random-row #(vec (repeatedly width random-tile))]
     (vec (repeatedly height random-row))))
 
@@ -48,7 +61,8 @@
 
 
 
-(defn distance [[x1 y1] [x2 y2]]
+(defn distance
+  [[x1 y1] [x2 y2]]
   (+ (Math/abs (- x1 x2)) (Math/abs (- y1 y2))))
 
 (defn find-stairs-location

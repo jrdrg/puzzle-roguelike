@@ -5,10 +5,12 @@
 
 (def initial-game-state {:running? true
                          :current-ui :main
+                         :messages ()
                          :tiles []
                          :position [0 0]
                          :time 0
                          :player {:hp 20
+                                  :max-hp 20
                                   :atk 1
                                   :def 1
                                   :food 50

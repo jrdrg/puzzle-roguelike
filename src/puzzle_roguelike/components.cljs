@@ -33,13 +33,28 @@
        [player-view position]
      ]))
 
+(defn- stat [header value]
+  [:div
+   [:span.stat-header header]
+   [:span.stat-value value]])
+
 (defn stats-view [player]
   (let []
     [:div.stats
-     [:div (str "hp: " (:hp player))]
-     [:div (str "atk: " (:atk player))]
-     [:div (str "def: " (:def player))]
-     [:div (str "food: " (:food player))]
-     [:div (str "xp: " (:xp player))]
-     [:div (str "gold: " (:gold player))]
+     [stat "hp: " (str (:hp player) " / " (:max-hp player))]
+     [stat "atk: " (:atk player)]
+     [stat "def: " (:def player)]
+     [stat "food: " (:food player)]
+     [stat "xp: " (:xp player)]
+     [stat "gold: " (:gold player)]
      ]))
+
+(defn- message [message idx]
+  (let []
+    ^{:key idx}[:div.message {:style {:opacity idx}} message]))
+
+(defn message-log [messages]
+  (let [msg-count (count messages)
+        get-opacities (fn [n] (/ n (- msg-count 1)))]
+    [:div.message-log
+     (map message messages (map get-opacities (range msg-count 0 -1)))]))
