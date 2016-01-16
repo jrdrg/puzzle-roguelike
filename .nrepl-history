@@ -1,0 +1,56 @@
+dev
+(dev)
+user/help
+(user/help)
+(dev)
+(boot dev)
+(quit)
+(in-ns 'puzzle-roguelike.map)
+@game-state
+(in-ns 'puzzle-roguelike.core)
+game-state
+(start-figwheel!)
+(in-ns 'boot.user)
+(start-figwheel!)
+(stop-figwheel!)
+(start-figwheel!)
+(stop-figwheel!)
+(start-figwheel!)
+:cljs/quit
+quit
+:cljs/quit
+(quit)
+(start-figwheel!)
+(quit)
+(start-figwheel!)
+(fig-status)
+(quit)
+(start-figwheel!)
+(stop-figwheel!)
+(start-figwheel!)
+(reload-config)
+(quit)
+(start-figwheel!)
+(quit)
+(start-figwheel!)
+(quit)
+(show)
+show 
+(show f)
+(show "-f")
+(quit)
+(start-figwheel!)
+(in-ns 'puzzle-roguelike.state)
+game-state
+(reload-config)
+(start-autobuild)
+(stop-autobuild)
+(quit)
+(start-figwheel!)
+(in-ns 'puzzle-roguelike.core)
+game-state
+(fw-cljs-repl)
+(boot.user/fw-cljs-repl)
+(in-ns 'boot.user)
+(fw-cljs-repl)
+(quit)

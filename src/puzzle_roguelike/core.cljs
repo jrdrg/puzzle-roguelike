@@ -16,7 +16,9 @@
   (reset! game-state (state/get-new-state)))
 
 
-(defn display-message [state message]
+(defn display-message
+  "Adds message to the message list in state"
+  [state message]
   (update-in state [:messages] conj message))
 
 
@@ -32,36 +34,57 @@
   (let [[pos-x pos-y] (:position state)
         tile-pos [(Math/floor (/ pos-x tile-size)) (Math/floor (/ pos-y tile-size))]]
     (if (map/valid-move? x y tile-pos)
-      (-> 
-       (assoc state :position [(* tile-size x) (* tile-size y)])
-       (subtract-food 1)
-       (display-message (str "Moved to " x ", " y)))
+      (-> state
+          (assoc :position [(* tile-size x) (* tile-size y)])
+          (subtract-food 1)
+          (display-message (str "Moved to " x ", " y)))
       (display-message state (str "Can't move there!")))))
 
 
-(defmulti dispatch-event #(:type %))
 
-(defmethod dispatch-event :move [data]
+;; Event handlers
+
+(defmulti dispatch-event "Returns a new state where the specified action has taken place"  #(:type %))
+
+(defmethod dispatch-event :move
+  [state data]
   (let [[x y] (:position data)
-        can-move? #(true)]
-    (reset! game-state (-> @game-state
-                           (move-player x y)))))
+        has-enemy? #(false)
+        has-item? #(false)
+        can-move? (and (not has-enemy?) (not has-item?))]
+    (-> state
+        (move-player x y))))
+
+(defmethod dispatch-event :attack
+  [state data]
+  (let [[x y] (:position data)]
+        ))
+
+(defmethod dispatch-event :get-item
+  [state data]
+  )
+
+
+
+;; Main game event dispatcher
 
 (defn run-event-loop
   "Listen to events on in-chan and dispatch accordingly"
   [in-chan]
   (go-loop []
     (let [data (<! in-chan)]
-      (print data)
       (cond
         (:type data)
-        (dispatch-event data))
+        (reset! game-state
+                (dispatch-event @game-state data)))
       (recur))))
 
 
 
 
-(defn game-container []
+(defn game-container
+  "Main container for game elements. Starts animation and event loops on first render."
+  []
   (run-event-loop events-chan)
   (animations/start-game-loop!)
   (fn []

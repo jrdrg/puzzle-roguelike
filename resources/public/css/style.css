@@ -51,6 +51,7 @@ body {
     width: 60px;
     color: darkgray;
     display: inline-block;
+    text-align: right;
 }
 
 .stat-value {
