@@ -17,12 +17,14 @@
                        :on-click (handler-fn (put! out-chan {:type :move :position [x y]}))}
    (:symbol tile)])
 
+
 (defn player-view [[pos-x pos-y]]
   [:div.player.tile.noselect {:style {:top pos-y
                                       :left pos-x
                                       :width tile-size
                                       :height tile-size}}
    "@"])
+
 
 (defn map-view [tiles position out-chan]
   (let [[width height] map/map-size]
@@ -32,6 +34,7 @@
        ^{:key (str x ":" y)} [tile-view tile x y out-chan])
        [player-view position]
      ]))
+
 
 (defn- stat [header value]
   [:div
@@ -48,6 +51,7 @@
      [stat "xp: " (:xp player)]
      [stat "gold: " (:gold player)]
      ]))
+
 
 (defn- message [message idx]
   (let []

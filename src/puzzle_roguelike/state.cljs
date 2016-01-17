@@ -23,7 +23,7 @@
   "Helper method to create a new initial state with any required random initialization"
   []
   (-> initial-game-state
-      (assoc :tiles (map/get-random-map (map/get-tile-records)))
+      (assoc :tiles (map/get-random-map (map/tile-map)))
       (assoc :position [0 0])
       (assoc :enemies {})
       (assoc :items {})))

@@ -4,7 +4,7 @@
             [puzzle-roguelike.state :as state :refer [game-state]]
             [puzzle-roguelike.map :as map]
             [puzzle-roguelike.animations :as animations]
-            [puzzle-roguelike.components :as cmp :refer [tile-size]])
+            [puzzle-roguelike.components :as c :refer [tile-size]])
   (:require-macros [cljs.core.async.macros :as am :refer [go-loop]]
                    [puzzle-roguelike.macros :as rm :refer [handler-fn]]))
 
@@ -30,12 +30,13 @@
 
 (defn move-player
   "Returns a new state where the player has moved to the specified position"
-  [state x y] ;; TODO: alter the state here, rename to move-player!
+  [state x y]
   (let [[pos-x pos-y] (:position state)
-        tile-pos [(Math/floor (/ pos-x tile-size)) (Math/floor (/ pos-y tile-size))]]
+        tile-pos [(Math/floor (/ pos-x tile-size)) (Math/floor (/ pos-y tile-size))]
+        move-to [(* tile-size x) (* tile-size y)]]
     (if (map/valid-move? x y tile-pos)
       (-> state
-          (assoc :position [(* tile-size x) (* tile-size y)])
+          (assoc :position move-to)
           (subtract-food 1)
           (display-message (str "Moved to " x ", " y)))
       (display-message state (str "Can't move there!")))))
@@ -44,7 +45,7 @@
 
 ;; Event handlers
 
-(defmulti dispatch-event "Returns a new state where the specified action has taken place"  #(:type %))
+(defmulti dispatch-event "Returns a new state where the specified action has taken place"  #(:type %2))
 
 (defmethod dispatch-event :move
   [state data]
@@ -65,18 +66,24 @@
   )
 
 
+(defn check-for-next-state
+  "Checks if the current ui/state should be updated (i.e. game over, new game, etc)"
+  [state]
+  state)
+
+
 
 ;; Main game event dispatcher
 
 (defn run-event-loop
-  "Listen to events on in-chan and dispatch accordingly"
+  "Main game event dispatcher. Listen to events on in-chan and dispatch accordingly"
   [in-chan]
   (go-loop []
     (let [data (<! in-chan)]
       (cond
         (:type data)
         (reset! game-state
-                (dispatch-event @game-state data)))
+                (check-for-next-state (dispatch-event @game-state data))))
       (recur))))
 
 
@@ -95,9 +102,9 @@
       [:div.container
        [:div.title "this game has no title"]
        [:div.game-wrapper
-        [cmp/map-view tiles position events-chan]
-        [cmp/stats-view player]]
-       [cmp/message-log messages]
+        [c/map-view tiles position events-chan]
+        [c/stats-view player]]
+       [c/message-log messages]
        [:button {:on-click (handler-fn (initialize!))} "Reset map"]
        ])))
 

@@ -99,4 +99,5 @@ body {
 .player {
     color: yellow;
     font-size: 30px;
+    transition: 0.1s all;
 }
