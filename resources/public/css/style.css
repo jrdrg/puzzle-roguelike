@@ -1,6 +1,7 @@
 /* some style */
 
 body {
+    font-family: Lora;
     background: #333;
     color: white;
     font-size: 20px;
@@ -62,7 +63,7 @@ body {
 .message-log {
     flex: 1;
     flex-grow: 0;
-    flex-basis: 200px;
+    flex-basis: 210px;
     border: 2px solid white;
     margin-top: 10px;
     width: 100%;
@@ -100,4 +101,14 @@ body {
     color: yellow;
     font-size: 30px;
     transition: 0.1s all;
+}
+
+
+@media (max-width: 1024px) {
+    .container {
+        width: 90%;
+    }
+    .stats {
+        flex-basis: 180px;
+    }
 }
