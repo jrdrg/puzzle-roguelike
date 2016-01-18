@@ -89,18 +89,17 @@
   (let [tiles-list (flatten map)
         empty? #(= :empty (:key %))
         far-enough? #(> (distance [start-x start-y] (:position %)) 5)
-        filter-criteria #(and (empty? %) (far-enough? %))
-        possible-tiles (filter filter-criteria tiles-list)]
+        maybe-stairs? #(and (empty? %) (far-enough? %))
+        possible-tiles (filter maybe-stairs? tiles-list)]
     (:position (rand-nth possible-tiles))))
-
 
 (defn place-stairs-down
   "Places the stairs on the map at a random point"
   [map [start-x start-y]]
-  (let [stairs-down-tile (first (filter #(= :stairs-down (:key %)) (tile-map)))
-        [stairs-x stairs-y] (find-stairs-location map start-x start-y)]
-    ;; (print (str stairs-x ":" stairs-y))
-    (assoc-in map [stairs-x stairs-y] (assoc stairs-down-tile :position [stairs-x stairs-y]))))
+  (let [stairs-down-tile (first (by-key (tile-map) :stairs-down))
+        [pos-x pos-y] (find-stairs-location map start-x start-y)]
+    ;; (print (str (nth pos 0) ":" (nth pos 1)))
+    (assoc-in map [pos-y pos-x] (assoc stairs-down-tile :position [pos-x pos-y])))) ;; reverse y- and x- position when associating in map
 
 
 (defn possible-enemy-locations

@@ -31,10 +31,9 @@
 (defn move-player
   "Returns a new state where the player has moved to the specified position"
   [state x y]
-  (let [[pos-x pos-y] (:position state)
-        tile-pos [pos-x pos-y]
+  (let [current-pos (:position state)
         move-to [x y]]
-    (if (map/valid-move? x y tile-pos)
+    (if (map/valid-move? x y current-pos)
       (-> state
           (assoc :position move-to)
           (subtract-food 1)
@@ -42,20 +41,41 @@
       (display-message state (str "Can't move there!")))))
 
 
+(defn stairs-down?
+  [map x y]
+  (-> (get-in map [y x]) (:key) (= :stairs-down)))
+
 
 ;; Event handlers
 
-(defmulti dispatch-event "Returns a new state where the specified action has taken place"  #(:type %2))
+(defmulti dispatch-event "Returns a new state where the specified action has taken place" (fn [state data] (:type data)))
 
 (defmethod dispatch-event :move
   [state data]
-  (let [[x y] (:position data)
-        has-enemy? #(false)
-        has-item? #(false)
-        stairs-down? #()
-        can-move? (and (not has-enemy?) (not has-item?))]
-    (-> state
-        (move-player x y))))
+  (let [out-chan events-chan
+        [x y] (:position data)
+        map (:tiles state)
+        enemy? false
+        item? false
+        can-move? (and (not enemy?) (not item?))]
+    (cond
+      (stairs-down? map x y)
+      (do
+        (-> state
+            (move-player x y)
+            (display-message "Stairs down - click to go to the next level")))
+      
+      can-move?
+      (-> state
+          (move-player x y))
+      
+      enemy?
+      (do
+        (put! out-chan {:type :attack :position [x y]})
+        state)
+      
+      item?
+      state)))
 
 (defmethod dispatch-event :attack
   [state data]
@@ -66,6 +86,14 @@
   [state data]
   )
 
+(defmethod dispatch-event :stairs-down
+  [state data]
+  (let [[x y] (:position data)
+        map (:tiles state)]
+    (print (str x ":" y))
+    (if (stairs-down? map x y)
+      (display-message state "TODO: Generate new level...")
+      state)))
 
 (defn check-for-next-state
   "Checks if the current ui/state should be updated (i.e. game over, new game, etc)"

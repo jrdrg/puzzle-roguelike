@@ -25,7 +25,7 @@
   (let [start-position [(rand-int 10) (rand-int 10)]]
     (-> initial-game-state
         (assoc :tiles (map/get-random-map (map/tile-map)))
-        (assoc :position start-position)  ;; Fix this to randomly choose a tile position instead of a pixel position - handle pixel drawing in component
+        (assoc :position start-position)
         (update :tiles #(map/place-stairs-down % start-position))  ;; Fix this to use the initial position
         (map/add-enemies-to-map)
         (assoc :items {}))))

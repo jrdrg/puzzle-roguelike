@@ -18,12 +18,16 @@
    (:symbol tile)])
 
 
-(defn player-view [[pos-x pos-y]]
-  [:div.player.tile.noselect {:style {:top pos-y
-                                      :left pos-x
-                                      :width tile-size
-                                      :height tile-size}}
-   "@"])
+(defn player-view [[x y] out-chan]
+  (let [pos-x (* x tile-size)
+        pos-y (* y tile-size)]
+    [:div.player.tile.noselect {:style {:top pos-y
+                                        :left pos-x
+                                        :width tile-size
+                                        :height tile-size}
+                                :on-click (handler-fn (put! out-chan {:type :stairs-down :position [x y]}))}
+     "@"]))
+ 
 
 
 (defn map-view [tiles position out-chan]
@@ -35,7 +39,7 @@
            :let [tile (map/get-tile-at tiles x y)]]
        ^{:key (str x ":" y)}
        [tile-view tile x y out-chan])
-     [player-view pixel-position]
+     [player-view position out-chan]
      ]))
 
 
