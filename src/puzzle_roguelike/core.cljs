@@ -32,8 +32,8 @@
   "Returns a new state where the player has moved to the specified position"
   [state x y]
   (let [[pos-x pos-y] (:position state)
-        tile-pos [(Math/floor (/ pos-x tile-size)) (Math/floor (/ pos-y tile-size))]
-        move-to [(* tile-size x) (* tile-size y)]]
+        tile-pos [pos-x pos-y]
+        move-to [x y]]
     (if (map/valid-move? x y tile-pos)
       (-> state
           (assoc :position move-to)
@@ -52,6 +52,7 @@
   (let [[x y] (:position data)
         has-enemy? #(false)
         has-item? #(false)
+        stairs-down? #()
         can-move? (and (not has-enemy?) (not has-item?))]
     (-> state
         (move-player x y))))

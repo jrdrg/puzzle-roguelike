@@ -27,12 +27,15 @@
 
 
 (defn map-view [tiles position out-chan]
-  (let [[width height] map/map-size]
+  (let [[width height] map/map-size
+        [player-x player-y] position
+        pixel-position [(* player-x tile-size) (* player-y tile-size)]]
     [:div.map {:style {:height (* tile-size height) :width (* tile-size width) :flex-basis (* tile-size width)}}
      (for [y (range height) x (range width)
            :let [tile (map/get-tile-at tiles x y)]]
-       ^{:key (str x ":" y)} [tile-view tile x y out-chan])
-       [player-view position]
+       ^{:key (str x ":" y)}
+       [tile-view tile x y out-chan])
+     [player-view pixel-position]
      ]))
 
 
