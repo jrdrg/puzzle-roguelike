@@ -14,7 +14,8 @@
                                :left (* x tile-size)
                                :height tile-size
                                :width tile-size}
-                       :on-click (handler-fn (put! out-chan {:type :move :position [x y]}))}
+                       :on-click (handler-fn (put! out-chan {:type :move :position [x y]}))
+                       :on-touchend (handler-fn (put! out-chan {:type :move :position [x y]}))}
    (:symbol tile)])
 
 
