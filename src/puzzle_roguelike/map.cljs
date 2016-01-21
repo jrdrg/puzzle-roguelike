@@ -1,30 +1,30 @@
 (ns puzzle-roguelike.map
-  )
+  (:require [puzzle-roguelike.images :as img :refer [sprite-coords]]))
 
 (def map-size [10 10])
 
 
-(def tile-keys  [:key :symbol :background :weight])
+(def tile-keys  [:key :symbol :background :weight :description :sprite])
 
-(def tile-data [[:bounds      "X"  "red"    0]
-                [:stairs-down ">"  "green"  0]
-                [:stairs-up   "<"  "green"  0]
-                [:empty       "."  "black"  8]  ;normal movement, 1 food
-                [:water       "~"  "blue"   1]  ;maybe can't cross? not sure yet
-                [:rocks       "*"  "gray"   2]  ;2 food
+(def tile-data [[:bounds      "X"  "red"    0  "out of bounds"  (sprite-coords 7 0)]
+                [:stairs-down ">"  "green"  0  "stairs down"    (sprite-coords 3 0)]
+                [:stairs-up   "<"  "green"  0  "stairs up"      (sprite-coords 6 7)]
+                [:empty       "."  "black"  8  "a floor"        (sprite-coords 1 0)] ;normal movement, 1 food
+                [:water       "~"  "blue"   1  "water"          (sprite-coords 7 2)] ;maybe can't cross? not sure yet
+                [:rocks       "*"  "#333"   2  "rocks"          (sprite-coords 12 3)] ;2 food
                 ])
 
-(def entity-keys [:key :symbol :color :weight])
+(def entity-keys [:key :description :symbol :color :weight])
 
-(def entity-data [[:coin  "$"  "yellow"  6]
-                  [:hp    "H"  "red"     1]
-                  [:food  "F"  "brown"   2]])
+(def entity-data [[:coin "a coin"  "$"  "yellow"  6]
+                  [:hp   "hp +"    "H"  "red"     1]
+                  [:food "food"    "F"  "brown"   2]])
 
 
-(def enemy-keys [:key :symbol :color :level :hp :effect])
+(def enemy-keys [:key :symbol :color :sprite :level :hp :effect])
 
-(def enemy-data [[:bat    "b"  "darkblue"  1  2   :none]
-                 [:snake  "s"  "green"     2  10  {:poison 2}]])
+(def enemy-data [[:bat    "b"  "#559"       (sprite-coords 12 7)     1  2   :none]
+                 [:snake  "s"  "lightgreen" (sprite-coords 9 2)      2  10  {:poison 2}]])
 
 
 (defn- keys-and-data
@@ -75,12 +75,15 @@
   [[x1 y1] [x2 y2]]
   (+ (Math/abs (- x1 x2)) (Math/abs (- y1 y2))))
 
-
 (defn valid-move?
   "True if the given coordinates are a valid move from the current player position"
   [x y [pos-x pos-y]]
   (= 1 (distance [x y] [pos-x pos-y])))
 
+(defn stairs-down?
+  "True if the tile at [x y] is the stairs down"
+  [tile-map x y]
+  (-> (get-in tile-map [y x]) (:key) (= :stairs-down)))
 
 
 (defn find-stairs-location
@@ -98,13 +101,13 @@
   [map [start-x start-y]]
   (let [stairs-down-tile (first (by-key (tile-map) :stairs-down))
         [pos-x pos-y] (find-stairs-location map start-x start-y)]
-    ;; (print (str (nth pos 0) ":" (nth pos 1)))
     (assoc-in map [pos-y pos-x] (assoc stairs-down-tile :position [pos-x pos-y])))) ;; reverse y- and x- position when associating in map
 
 
 (defn possible-enemy-locations
-  [map]
-  map)
+  [tile-map start-pos]
+  (let []
+    tile-map))
 
 (defn add-enemy
   "Adds an enemy at the given location"
@@ -112,9 +115,25 @@
   (conj list {[pos-x pos-y] enemy}))
 
 
+(defn maybe-enemies?
+  [tile-map enemies player-pos]
+  (let [has-enemy? (fn [[x y]] (contains? enemies [x y]))
+        stairs? (fn [[x y]] (stairs-down? tile-map x y))
+        player? (fn [[x y]] (= player-pos [x y]))
+        candidate? #(and (not (has-enemy? %)) (not (stairs? %)) (not (player? %)))]
+    (shuffle (filter #(candidate? (:position %)) (flatten tile-map)))))
+
 (defn add-enemies-to-map
   "Adds random enemies to the map. Requires the map to have been previously generated, and needs the state since enemies are stored separately from tiles."
   [state]
-  (let [map (:tiles state)
-        enemies (:enemies state)]
-    state))
+  (let [tiles (:tiles state)
+        possible (maybe-enemies? tiles (:enemies state) (:position state))
+        min (* (count possible) 0.2)
+        max (* (count possible) 0.4)
+        num-enemies (+ (rand-int (- max min)) min)
+        random-enemy #(rand-nth (enemy-map))
+        ]
+    (->> (take num-enemies possible)
+         (map (fn [i] {(:position i) (random-enemy)}))
+         (into {} conj)
+         (update state :enemies conj))))
