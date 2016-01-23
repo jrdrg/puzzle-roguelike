@@ -114,6 +114,10 @@
   [list enemy [pos-x pos-y]]
   (conj list {[pos-x pos-y] enemy}))
 
+(defn remove-enemy
+  "Removes an enemy from the given location"
+  [list [pos-x pos-y]]
+  (dissoc list [pos-x pos-y]))
 
 (defn maybe-enemies?
   [tile-map enemies player-pos]

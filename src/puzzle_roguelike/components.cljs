@@ -20,7 +20,7 @@
         symbol (:symbol entity)
         color (:color entity)
         sprite (apply str (map #(str % "px ") (:sprite entity)))]
-    [:div.tile.noselect {:style {:background (:background tile)
+    [:div.tile.noselect {:style {:background "black" ;; (:background tile)
                                  :color (or color "antiquewhite")
                                  :top (* y tile-size)
                                  :left (* x tile-size)
@@ -28,7 +28,6 @@
                                  :width tile-size}
                          :on-click (handler-fn (put! out-chan {:type :move :position [x y]}))}
      ;; (when (not player?) symbol)
-     ;; (print (:sprite entity))
      [:div.scaled-image.sprite {:style {:background (str "url(roguelike_tileset.png) " sprite)
                                         :transform (str "scale(" scale-factor ")")
                                         :width img-size-x
@@ -56,7 +55,6 @@
                                 :on-click (handler-fn (put! out-chan {:type :stairs-down :position [x y]}))}
      [:div.tile.scaled-image {:style {:background (str "url(roguelike_tileset.png) " sprite)
                          :transform (str "scale(" scale-factor ")")
-                         ;; :transform "scale(2)"
                          :width img-size-x
                          :height img-size-y}}] "@"]))
 

@@ -5,7 +5,7 @@
             [puzzle-roguelike.map :as map]
             [puzzle-roguelike.animations :as animations]
             [puzzle-roguelike.components :as c :refer [tile-size]])
-  (:require-macros [cljs.core.async.macros :as am :refer [go-loop]]
+  (:require-macros [cljs.core.async.macros :as am :refer [go-loop go]]
                    [puzzle-roguelike.macros :as rm :refer [handler-fn]]))
 
 (enable-console-print!)
@@ -80,10 +80,16 @@
 
 (defmethod dispatch-event :attack
   [state data]
-  (let [[x y] (:position data)]
+  (let [[x y] (:position data)
+        enemy (get (:enemies state) [x y])]
+    (go  ;; FIXME - dispatch-event should return a channel to support stuff like animation, etc
+      (print "timeout 1000")
+      (<! (async/timeout 3000))
+      (print "done"))
     (-> state
-        (display-message "attacking..."))))
-
+        (display-message (str "attacking..." (:key enemy)))
+        ))
+)
 (defmethod dispatch-event :get-item
   [state data]
   state)
@@ -118,7 +124,7 @@
     (let [data (<! in-chan)]
       (cond
         (:type data)
-        (reset! game-state
+        (reset! game-state ;; dispatch-event should return a channel here
                 (check-for-next-state (dispatch-event @game-state data))))
       (recur))))
 
