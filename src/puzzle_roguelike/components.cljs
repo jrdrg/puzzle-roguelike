@@ -1,10 +1,11 @@
 (ns puzzle-roguelike.components
   (:require [cljs.core.async :as async :refer [put!]]
             [puzzle-roguelike.map :as map]
+            [puzzle-roguelike.state :as state]
             [puzzle-roguelike.images :as img :refer [sprite-image-size player]])
   (:require-macros [puzzle-roguelike.macros :as rm :refer [handler-fn]]))
 
-(def tile-size 48)
+(def tile-size 40)
 (def img-size [16 16])
 
 (def scale-factor (/ tile-size (get sprite-image-size 0)))
@@ -20,28 +21,22 @@
         symbol (:symbol entity)
         color (:color entity)
         sprite (apply str (map #(str % "px ") (:sprite entity)))]
-    [:div.tile.noselect {:style {:background "black" ;; (:background tile)
-                                 :color (or color "antiquewhite")
-                                 :top (* y tile-size)
-                                 :left (* x tile-size)
-                                 :height tile-size
-                                 :width tile-size}
-                         :on-click (handler-fn (put! out-chan {:type :move :position [x y]}))}
-     ;; (when (not player?) symbol)
-     [:div.scaled-image.sprite {:style {:background (str "url(roguelike_tileset.png) " sprite)
-                                        :transform (str "scale(" scale-factor ")")
-                                        :width img-size-x
-                                        :height img-size-y}}]
+    [:div.tile.noselect.scaled-image
+     {:style {:background (str "url(roguelike_tileset.png) " (sprite-to-string (:sprite tile)) " black")
+              :transform (str "scale(" scale-factor ")")
+              :color (or color "antiquewhite")
+              :top (* y tile-size)
+              :left (* x tile-size)
+              :height img-size-y
+              :width img-size-x}
+      :on-click (handler-fn (put! out-chan {:type :move :position [x y]}))}
+     [:div.scaled-image.sprite
+      {:style {:background (str "url(roguelike_tileset.png) " sprite)
+               ;;:transform (str "scale(" scale-factor ")")
+               :width img-size-x
+               :height img-size-y}}]
      ]))
 
-
-(defn enemy-view [enemy x y out-chan]
-  [:div.enemy.tile.noselect {:style {:background "white"
-                                     :top (* y tile-size)
-                                     :left (* x tile-size)
-                                     :height tile-size
-                                     :width tile-size}}
-   (:symbol enemy)])
 
 (defn player-view [[x y] out-chan]
   (let [[img-size-x img-size-y] sprite-image-size
@@ -68,19 +63,20 @@
      (for [y (range height) x (range width)
            :let [tile (map/get-tile-at tiles x y)
                  enemy (get enemies [x y])
+                 item (get items [x y])
                  item? (contains? items [x y])]]
        (cond
          ;; enemy?
          ;; ^{:key (str "E" x ":" y)}
          ;; [:div.tile {:style {:color "red" :background "black" :top (* y tile-size) :left (* x tile-size) :width tile-size :height tile-size}} "E"]
 
-         item?
-         ^{:key (str "I" x ":" y)}
-         [:div.tile {:style {:color "red" :top (* y tile-size) :left (* x tile-size) :width tile-size :height tile-size}} "I"]
+         ;;item?
+         ;;^{:key (str "I" x ":" y)}
+         ;;[:div.tile {:style {:color "red" :top (* y tile-size) :left (* x tile-size) :width tile-size :height tile-size}} "I"]
 
          :else
          ^{:key (str "T" x ":" y)}
-         [tile-view x y tile enemy nil (= position [x y]) out-chan])
+         [tile-view x y tile enemy item (= position [x y]) out-chan])
        )
      [player-view position out-chan]
      ]))
@@ -101,6 +97,8 @@
      [stat "xp" (:xp player)]
      [stat "level" (:level player)]
      [stat "gold" (:gold player)]
+
+     [:img {:src "roguelike_tileset.png"}]
      ]))
 
 
@@ -113,3 +111,17 @@
         get-opacities (fn [n] (/ n (- msg-count 1)))]
     [:div.message-log
      (map message messages (map get-opacities (range msg-count 0 -1)))]))
+
+(defn game-over []
+  (let []
+    [:div "Game Over"
+     [:button {:on-click (handler-fn (state/initialize!))} "try again"]
+     ]))
+
+(defn game-play
+  [events-chan player tiles enemies items position messages]
+  [:div
+   [:div.game-wrapper
+    [map-view tiles enemies items position events-chan]
+    [stats-view player]]
+   [message-log messages]])

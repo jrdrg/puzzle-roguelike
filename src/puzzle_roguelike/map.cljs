@@ -14,17 +14,22 @@
                 [:rocks       "*"  "#333"   2  "rocks"          (sprite-coords 12 3)] ;2 food
                 ])
 
-(def entity-keys [:key :description :symbol :color :weight])
+(def entity-keys [:key :description :symbol :color :weight :sprite])
 
-(def entity-data [[:coin "a coin"  "$"  "yellow"  6]
-                  [:hp   "hp +"    "H"  "red"     1]
-                  [:food "food"    "F"  "brown"   2]])
+(def entity-data [[:coin         "coin"          "$"  "yellow"  6  (sprite-coords 12 4)]
+                  [:moneybag     "money bag"     "$"  "yellow"  3  (sprite-coords 11 4)]
+                  [:hp           "hp +"          "H"  "red"     1  (sprite-coords 1 9)]
+                  [:atk          "atk +"         "A"  "blue"    2  (sprite-coords 2 3)]
+                  [:def          "def +"         "D"  "gray"    2  (sprite-coords 3 3)]
+                  [:food         "food"          "F"  "brown"   2  (sprite-coords 6 8)]
+                  [:closed-chest "a chest"       "C"  "red"     1  (sprite-coords 0 8)]
+                  [:open-chest   "an open chest" "C"  "red"     0  (sprite-coords 1 8)]])
 
 
-(def enemy-keys [:key :symbol :color :sprite :level :hp :effect])
+(def enemy-keys [:key :symbol :description :color :sprite :level :hp :effect])
 
-(def enemy-data [[:bat    "b"  "#559"       (sprite-coords 12 7)     1  2   :none]
-                 [:snake  "s"  "lightgreen" (sprite-coords 9 2)      2  10  {:poison 2}]])
+(def enemy-data [[:bat    "b" "bat"    "#559"       (sprite-coords 12 7)     1  2   :none]
+                 [:snake  "s" "snake"  "lightgreen" (sprite-coords 9 2)      2  5   {:poison 2}]])
 
 
 (defn- keys-and-data
@@ -45,6 +50,9 @@
   []
   (keys-and-data tile-keys tile-data))
 
+(defn item-map
+  []
+  (keys-and-data entity-keys entity-data))
 
 (defn get-random-tile
   "Returns a random tile from tiles, taking its weight into consideration"
@@ -119,7 +127,7 @@
   [list [pos-x pos-y]]
   (dissoc list [pos-x pos-y]))
 
-(defn maybe-enemies?
+(defn maybe-something?
   [tile-map enemies player-pos]
   (let [has-enemy? (fn [[x y]] (contains? enemies [x y]))
         stairs? (fn [[x y]] (stairs-down? tile-map x y))
@@ -127,17 +135,42 @@
         candidate? #(and (not (has-enemy? %)) (not (stairs? %)) (not (player? %)))]
     (shuffle (filter #(candidate? (:position %)) (flatten tile-map)))))
 
+(defn random-between
+  [min-pct max-pct count]
+  (let [min (* count min-pct)
+        max (* count max-pct)]
+    (+ (rand-int (- max min)) min)))
+
+(defn possible-tiles
+  "Returns a list of tiles that are empty and can have something placed on them"
+  [state]
+  (maybe-something? (:tiles state) (:enemies state) (:position state)))
+
+(defn random-enemies-list
+  [state]
+  (let [possible (possible-tiles state)
+        num-enemies (random-between 0.2 0.4 (count possible))
+        random-enemy #(rand-nth (enemy-map))]
+    (->> (take num-enemies possible)
+         (map (fn [i] {(:position i) (random-enemy)}))
+         (into {} conj))))
+
+(defn random-items-list
+  [state]
+  (let [possible (possible-tiles state)
+        num-items (random-between 0.6 0.9 (count possible))
+        random-item #(get-random-tile (item-map))]
+    (->> (take num-items possible)
+         (map (fn [i] {(:position i) (random-item)}))
+         (into {} conj))))
+
 (defn add-enemies-to-map
   "Adds random enemies to the map. Requires the map to have been previously generated, and needs the state since enemies are stored separately from tiles."
   [state]
-  (let [tiles (:tiles state)
-        possible (maybe-enemies? tiles (:enemies state) (:position state))
-        min (* (count possible) 0.2)
-        max (* (count possible) 0.4)
-        num-enemies (+ (rand-int (- max min)) min)
-        random-enemy #(rand-nth (enemy-map))
-        ]
-    (->> (take num-enemies possible)
-         (map (fn [i] {(:position i) (random-enemy)}))
-         (into {} conj)
-         (update state :enemies conj))))
+  (->> (random-enemies-list state)
+       (assoc state :enemies)))
+
+(defn add-items-to-map
+  [state]
+  (->> (random-items-list state)
+       (assoc state :items)))

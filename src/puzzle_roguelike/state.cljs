@@ -28,7 +28,7 @@
       (assoc :position start-position)
       (update :tiles #(map/place-stairs-down % start-position))
       (map/add-enemies-to-map)
-      (assoc :items {})))
+      (map/add-items-to-map)))
   
 
 (defn create-initial-state
@@ -40,3 +40,8 @@
 
 ;; Main state atom
 (defonce game-state (atom (create-initial-state)))
+
+
+
+(defn initialize! []
+  (reset! game-state (create-initial-state)))

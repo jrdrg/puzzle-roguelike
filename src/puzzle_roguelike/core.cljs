@@ -1,7 +1,7 @@
 (ns puzzle-roguelike.core
   (:require [reagent.core :as reagent]
             [cljs.core.async :as async :refer [<! >! put! chan]]
-            [puzzle-roguelike.state :as state :refer [game-state]]
+            [puzzle-roguelike.state :as state :refer [game-state initialize!]]
             [puzzle-roguelike.map :as map]
             [puzzle-roguelike.animations :as animations]
             [puzzle-roguelike.components :as c :refer [tile-size]])
@@ -11,9 +11,6 @@
 (enable-console-print!)
 
 (def events-chan (chan))
-
-(defn initialize! []
-  (reset! game-state (state/create-initial-state)))
 
 
 (defn display-message
@@ -53,7 +50,7 @@
         [x y] (:position data)
         map (:tiles state)
         enemy? (contains? (:enemies state) [x y])
-        item? false
+        item? (contains? (:items state) [x y])
         can-move? (and (not enemy?) (not item?))]
     (if (map/valid-move? x y (:position state))
       (cond
@@ -73,26 +70,77 @@
           state)
 
         item?
-        state)
+        (do
+          (put! out-chan {:type :get-item :position [x y]})
+          (move-player state x y)))
+      
       (let [get-description #(:description (map/get-tile-at map x y))]
         (display-message state (str "you see: " (get-description))))
       )))
 
+(defn remove-enemy-if-dead
+  [state enemy [x y] dmg]
+  (let [after-dmg (update-in state [:enemies [x y] :hp] - dmg)]
+    (if (<= (get-in after-dmg [:enemies [x y] :hp]) 0)
+      (display-message (update-in state [:enemies] dissoc [x y]) "Defeated!")
+      (display-message after-dmg (str "Hit " (:description enemy) " for " dmg))
+      )))
+
+(defn remove-item
+  [state [x y]]
+  (update-in state [:items] dissoc [x y]))
+
 (defmethod dispatch-event :attack
   [state data]
   (let [[x y] (:position data)
-        enemy (get (:enemies state) [x y])]
+        enemy (get (:enemies state) [x y])
+        player-atk (get-in state [:player :atk])
+        player-dmg (+ player-atk (rand-int player-atk))
+        enemy-dmg (rand-int (:level enemy))]
     (go  ;; FIXME - dispatch-event should return a channel to support stuff like animation, etc
-      (print "timeout 1000")
+      (print (str "timeout 1000" enemy))
       (<! (async/timeout 3000))
       (print "done"))
     (-> state
-        (display-message (str "attacking..." (:key enemy)))
+        (remove-enemy-if-dead enemy [x y] player-dmg)
         ))
 )
 (defmethod dispatch-event :get-item
   [state data]
-  state)
+  (let [[x y] (:position data)
+        item  (get (:items state) [x y])]
+    (condp = (:key item)
+      :coin
+      (-> state
+          (display-message "Money!")
+          (update-in [:player :gold] + 1)
+          (remove-item [x y]))
+
+      :moneybag
+      (-> state
+          (display-message "$$$$$$$")
+          (update-in [:player :gold] + 10)
+          (remove-item [x y]))
+
+      :atk
+      (-> state
+          (display-message "atk +")
+          (update-in [:player :atk] + 1)
+          (remove-item [x y]))
+
+      :def
+      (-> state
+          (display-message "def +")
+          (update-in [:player :def] + 1)
+          (remove-item [x y]))
+
+      :food
+      (-> state
+          (display-message "Food!")
+          (update-in [:player :food] + 5)
+          (remove-item [x y]))
+
+      (remove-item (display-message state (str "you pick up the " (:description item))) [x y]))))
 
 (defmethod dispatch-event :stairs-down
   [state data]
@@ -107,11 +155,20 @@
       state)))
 
 
+(defn dead?
+  [state]
+  (or (<= (get-in state [:player :food]) 0)
+      (<= (get-in state [:player :hp]) 0)))
 
 (defn check-for-next-state
   "Checks if the current ui/state should be updated (i.e. game over, new game, etc)"
   [state]
-  state)
+  (cond
+    (dead? state)
+    (assoc state :current-ui :game-over)
+
+    :else
+    state))
 
 
 
@@ -129,6 +186,14 @@
       (recur))))
 
 
+(defn display-ui
+   [player tiles enemies items position messages]
+  (condp = (:current-ui @game-state)
+    :main
+    [c/game-play events-chan player tiles enemies items position messages]
+
+    :game-over
+    [c/game-over]))
 
 
 (defn game-container
@@ -145,12 +210,8 @@
           messages (take 8 (:messages @game-state))]
       [:div.container
        [:div.title "this game has no title"]
-       [:div.game-wrapper
-        [c/map-view tiles enemies items position events-chan]
-        [c/stats-view player]]
-       [c/message-log messages]
+       [display-ui player tiles enemies items, position messages]
        [:button {:on-click (handler-fn (initialize!))} "Reset game"]
-       [:img {:src "roguelike_tileset.png"}]
        [:a.tileset-link {:href "http://makegames.tumblr.com/post/41267990744/before-spelunky-i-started-a-simple-little"} "Tileset images from here"]
        ])))
 
