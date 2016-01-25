@@ -21,6 +21,8 @@
 
 
 (task-options!
+ dev {
+      }
  autoprefixer {:files ["style.css"]
                :browsers "last 2 versions"}
  figwheel {:build-ids  ["dev"]
@@ -40,6 +42,7 @@
                               :open-file-command "emacsclient"}})
 
 (deftask dev []
+  (set-env! :source-paths #(into % ["src"]))
   (comp (autoprefixer)
         (cljs)
         )) 
