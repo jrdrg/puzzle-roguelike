@@ -98,8 +98,8 @@
      [stat "level" (:level player)]
      [stat "gold" (:gold player)]
 
-     [:img {:src "roguelike_tileset.png"}]
-     [:button {:on-click (handler-fn (state/initialize!))} "Reset game"]
+     ;; [:img {:src "roguelike_tileset.png"}]
+     ;; [:button {:on-click (handler-fn (state/initialize!))} "Reset game"]
      ]))
 
 
@@ -123,7 +123,7 @@
 
 (defn game-play
   [events-chan player tiles enemies items position messages]
-  [:div {:style {:display "flex" :flex-direction "column"}}
+  [:div {:style {:display "flex" :flex-direction "column" :width "100%"}}
    [:div.game-wrapper
     [map-view tiles enemies items position events-chan]
     [stats-view player]]
