@@ -49,14 +49,14 @@ var n__17729__auto__ = a.length;
 var i = (0);
 while(true){
 if((i < n__17729__auto__)){
-var c_64902 = (a[i]);
-if(cljs.core.truth_((c_64902["cljsIsDirty"]))){
-(c_64902["forceUpdate"])();
+var c_57433 = (a[i]);
+if(cljs.core.truth_((c_57433["cljsIsDirty"]))){
+(c_57433["forceUpdate"])();
 } else {
 }
 
-var G__64903 = (i + (1));
-i = G__64903;
+var G__57434 = (i + (1));
+i = G__57434;
 continue;
 } else {
 return null;
@@ -71,8 +71,8 @@ while(true){
 if((i < n__17729__auto__)){
 (a[i]).call(null);
 
-var G__64904 = (i + (1));
-i = G__64904;
+var G__57435 = (i + (1));
+i = G__57435;
 continue;
 } else {
 return null;
@@ -173,10 +173,10 @@ reagent.impl.batching.do_after_flush.call(null,f);
 return reagent.impl.batching.render_queue.schedule();
 });
 reagent.impl.batching.is_reagent_component = (function reagent$impl$batching$is_reagent_component(c){
-var G__64906 = c;
-var G__64906__$1 = (((G__64906 == null))?null:(G__64906["props"]));
-var G__64906__$2 = (((G__64906__$1 == null))?null:(G__64906__$1["argv"]));
-return G__64906__$2;
+var G__57437 = c;
+var G__57437__$1 = (((G__57437 == null))?null:(G__57437["props"]));
+var G__57437__$2 = (((G__57437__$1 == null))?null:(G__57437__$1["argv"]));
+return G__57437__$2;
 });
 reagent.impl.batching.run_reactively = (function reagent$impl$batching$run_reactively(c,run){
 if(cljs.core.truth_(reagent.impl.batching.is_reagent_component.call(null,c))){
@@ -205,10 +205,10 @@ return reagent.ratom.run.call(null,rat);
 }
 });
 reagent.impl.batching.dispose = (function reagent$impl$batching$dispose(c){
-var G__64908_64909 = (c["cljsRatom"]);
-var G__64908_64910__$1 = (((G__64908_64909 == null))?null:reagent.ratom.dispose_BANG_.call(null,G__64908_64909));
+var G__57439_57440 = (c["cljsRatom"]);
+var G__57439_57441__$1 = (((G__57439_57440 == null))?null:reagent.ratom.dispose_BANG_.call(null,G__57439_57440));
 
 return reagent.impl.batching.mark_rendered.call(null,c);
 });
 
-//# sourceMappingURL=batching.js.map?rel=1453136834664
+//# sourceMappingURL=batching.js.map?rel=1453728831640

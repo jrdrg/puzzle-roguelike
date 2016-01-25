@@ -10,25 +10,29 @@
                          :position [0 0]
                          :time 0
                          :floor 1
-                         :player {:hp 20
+                         :player {:cause-of-death nil
+                                  :animation {:pos 0}
+                                  :hp 20
                                   :max-hp 20
                                   :atk 1
                                   :def 1
                                   :food 50
                                   :gold 0
+                                  :keys 0
                                   :xp 0
                                   :level 1}
                          :enemies {}  ;vectors as keys corresponding to positions = {[1 1] {:enemy-data {}}}
                          :items {}})
 
 (defn new-level
-  [state level start-position]
+  [state floor start-position]
   (-> state
       (assoc :tiles (map/get-random-map (map/tile-map)))
       (assoc :position start-position)
       (update :tiles #(map/place-stairs-down % start-position))
+      (update :tiles #(map/place-start-point % start-position))
       (map/add-enemies-to-map)
-      (assoc :items {})))
+      (map/add-items-to-map)))
   
 
 (defn create-initial-state
@@ -40,3 +44,8 @@
 
 ;; Main state atom
 (defonce game-state (atom (create-initial-state)))
+
+
+
+(defn initialize! []
+  (reset! game-state (create-initial-state)))

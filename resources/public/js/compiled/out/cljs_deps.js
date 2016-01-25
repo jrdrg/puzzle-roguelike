@@ -17,9 +17,10 @@ goog.addDependency("../cljs/core/async/impl/channels.js", ['cljs.core.async.impl
 goog.addDependency("../cljs/core/async/impl/ioc_helpers.js", ['cljs.core.async.impl.ioc_helpers'], ['cljs.core', 'cljs.core.async.impl.protocols']);
 goog.addDependency("../cljs/core/async/impl/timers.js", ['cljs.core.async.impl.timers'], ['cljs.core.async.impl.channels', 'cljs.core.async.impl.dispatch', 'cljs.core', 'cljs.core.async.impl.protocols']);
 goog.addDependency("../cljs/core/async.js", ['cljs.core.async'], ['cljs.core.async.impl.channels', 'cljs.core.async.impl.dispatch', 'cljs.core', 'cljs.core.async.impl.buffers', 'cljs.core.async.impl.protocols', 'cljs.core.async.impl.ioc_helpers', 'cljs.core.async.impl.timers']);
-goog.addDependency("../puzzle_roguelike/map.js", ['puzzle_roguelike.map'], ['cljs.core']);
-goog.addDependency("../puzzle_roguelike/components.js", ['puzzle_roguelike.components'], ['cljs.core', 'cljs.core.async', 'puzzle_roguelike.map']);
+goog.addDependency("../puzzle_roguelike/images.js", ['puzzle_roguelike.images'], ['cljs.core']);
+goog.addDependency("../puzzle_roguelike/map.js", ['puzzle_roguelike.map'], ['cljs.core', 'puzzle_roguelike.images']);
 goog.addDependency("../puzzle_roguelike/state.js", ['puzzle_roguelike.state'], ['reagent.core', 'cljs.core', 'puzzle_roguelike.map']);
+goog.addDependency("../puzzle_roguelike/components.js", ['puzzle_roguelike.components'], ['cljs.core', 'cljs.core.async', 'puzzle_roguelike.state', 'puzzle_roguelike.images', 'puzzle_roguelike.map']);
 goog.addDependency("../puzzle_roguelike/animations.js", ['puzzle_roguelike.animations'], ['reagent.core', 'cljs.core', 'puzzle_roguelike.state']);
 goog.addDependency("../puzzle_roguelike/core.js", ['puzzle_roguelike.core'], ['reagent.core', 'cljs.core', 'puzzle_roguelike.components', 'cljs.core.async', 'puzzle_roguelike.state', 'puzzle_roguelike.map', 'puzzle_roguelike.animations']);
 goog.addDependency("../clojure/set.js", ['clojure.set'], ['cljs.core']);

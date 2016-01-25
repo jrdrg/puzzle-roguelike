@@ -1,30 +1,37 @@
 (ns puzzle-roguelike.map
-  )
+  (:require [puzzle-roguelike.images :as img :refer [sprite-coords]]))
 
 (def map-size [10 10])
 
 
-(def tile-keys  [:key :symbol :background :weight])
+(def tile-keys  [:key :description :symbol :background :food-consumption :weight :sprite])
 
-(def tile-data [[:bounds      "X"  "red"    0]
-                [:stairs-down ">"  "green"  0]
-                [:stairs-up   "<"  "green"  0]
-                [:empty       "."  "black"  8]  ;normal movement, 1 food
-                [:water       "~"  "blue"   1]  ;maybe can't cross? not sure yet
-                [:rocks       "*"  "gray"   2]  ;2 food
+(def tile-data [[:bounds      "out of bounds" "X"  "red"    1  0    (sprite-coords 7 0)]
+                [:stairs-down "stairs down"   ">"  "green"  1  0    (sprite-coords 3 0)]
+                [:stairs-up   "stairs up"     "<"  "green"  1  0    (sprite-coords 6 7)]
+                [:start-point "start"         "X"  "white"  1  0    (sprite-coords 7 4)]
+                [:empty       "a floor"       "."  "black"  1  8    (sprite-coords 1 0)] ;normal movement, 1 food
+                [:water       "water"         "~"  "blue"   1  1    (sprite-coords 7 2)] ;maybe can't cross? not sure yet
+                [:rocks       "rocks"         "*"  "#333"   1  2    (sprite-coords 12 3)] ;2 food
                 ])
 
-(def entity-keys [:key :symbol :color :weight])
+(def entity-keys [:key :description :symbol :color :weight :sprite])
 
-(def entity-data [[:coin  "$"  "yellow"  6]
-                  [:hp    "H"  "red"     1]
-                  [:food  "F"  "brown"   2]])
+(def entity-data [[:coin         "coin"          "$"  "yellow"  6  (sprite-coords 12 4)]
+                  [:moneybag     "money bag"     "$"  "yellow"  3  (sprite-coords 11 4)]
+                  [:hp           "hp +"          "H"  "red"     1  (sprite-coords 1 9)]
+                  [:atk          "atk +"         "A"  "blue"    2  (sprite-coords 2 3)]
+                  [:def          "def +"         "D"  "gray"    2  (sprite-coords 3 3)]
+                  [:food         "food"          "F"  "brown"   2  (sprite-coords 6 8)]
+                  [:key          "key"           "K"  "yellow"  1  (sprite-coords 2 2)]
+                  [:closed-chest "a chest"       "C"  "red"     1  (sprite-coords 0 8)]
+                  [:open-chest   "an open chest" "C"  "red"     0  (sprite-coords 1 8)]])
 
 
-(def enemy-keys [:key :symbol :color :level :hp :effect])
+(def enemy-keys [:key :description :symbol :color :sprite :level :hp :dmg :effect])
 
-(def enemy-data [[:bat    "b"  "darkblue"  1  2   :none]
-                 [:snake  "s"  "green"     2  10  {:poison 2}]])
+(def enemy-data [[:bat    "bat"   "b"  "#559"       (sprite-coords 12 7)  1  2  1  :none]
+                 [:snake  "snake" "s"  "lightgreen" (sprite-coords 9 2)   1  5  2  {:poison 2}]])
 
 
 (defn- keys-and-data
@@ -45,6 +52,9 @@
   []
   (keys-and-data tile-keys tile-data))
 
+(defn item-map
+  []
+  (keys-and-data entity-keys entity-data))
 
 (defn get-random-tile
   "Returns a random tile from tiles, taking its weight into consideration"
@@ -75,12 +85,15 @@
   [[x1 y1] [x2 y2]]
   (+ (Math/abs (- x1 x2)) (Math/abs (- y1 y2))))
 
-
 (defn valid-move?
   "True if the given coordinates are a valid move from the current player position"
   [x y [pos-x pos-y]]
   (= 1 (distance [x y] [pos-x pos-y])))
 
+(defn stairs-down?
+  "True if the tile at [x y] is the stairs down"
+  [tile-map x y]
+  (-> (get-in tile-map [y x]) (:key) (= :stairs-down)))
 
 
 (defn find-stairs-location
@@ -98,23 +111,56 @@
   [map [start-x start-y]]
   (let [stairs-down-tile (first (by-key (tile-map) :stairs-down))
         [pos-x pos-y] (find-stairs-location map start-x start-y)]
-    ;; (print (str (nth pos 0) ":" (nth pos 1)))
     (assoc-in map [pos-y pos-x] (assoc stairs-down-tile :position [pos-x pos-y])))) ;; reverse y- and x- position when associating in map
 
+(defn place-start-point
+  [map [start-x start-y]]
+  (assoc-in map [start-y start-x] (assoc (first (by-key (tile-map) :start-point)) :position [start-x start-y])))
 
-(defn possible-enemy-locations
-  [map]
-  map)
+(defn maybe-something?
+  [tile-map enemies player-pos]
+  (let [has-enemy? (fn [[x y]] (contains? enemies [x y]))
+        stairs? (fn [[x y]] (stairs-down? tile-map x y))
+        player? (fn [[x y]] (= player-pos [x y]))
+        candidate? #(and (not (has-enemy? %)) (not (stairs? %)) (not (player? %)))]
+    (shuffle (filter #(candidate? (:position %)) (flatten tile-map)))))
 
-(defn add-enemy
-  "Adds an enemy at the given location"
-  [list enemy [pos-x pos-y]]
-  (conj list {[pos-x pos-y] enemy}))
+(defn random-between
+  [min-pct max-pct count]
+  (let [min (* count min-pct)
+        max (* count max-pct)]
+    (+ (rand-int (- max min)) min)))
 
+(defn possible-tiles
+  "Returns a list of tiles that are empty and can have something placed on them"
+  [state]
+  (maybe-something? (:tiles state) (:enemies state) (:position state)))
+
+(defn random-list
+  [state min-pct max-pct random-element]
+  (let [possible (possible-tiles state)
+        num (random-between min-pct max-pct (count possible))]
+    (->> (take num possible)
+         (map random-element)
+         (into {} conj))))
+
+(defn random-enemies-list
+  [state]
+  (let [random-enemy #(assoc (rand-nth (enemy-map)) :animation {:pos 0})]
+    (random-list state 0.2 0.4 (fn [i] {(:position i) (random-enemy)}))))
+
+(defn random-items-list
+  [state]
+  (let [random-item #(get-random-tile (item-map))]
+    (random-list state 0.6 0.9 (fn [i] {(:position i) (random-item)}))))
 
 (defn add-enemies-to-map
   "Adds random enemies to the map. Requires the map to have been previously generated, and needs the state since enemies are stored separately from tiles."
   [state]
-  (let [map (:tiles state)
-        enemies (:enemies state)]
-    state))
+  (->> (random-enemies-list state)
+       (assoc state :enemies)))
+
+(defn add-items-to-map
+  [state]
+  (->> (random-items-list state)
+       (assoc state :items)))
