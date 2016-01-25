@@ -4,14 +4,15 @@
 (def map-size [10 10])
 
 
-(def tile-keys  [:key :symbol :background :weight :description :sprite])
+(def tile-keys  [:key :description :symbol :background :food-consumption :weight :sprite])
 
-(def tile-data [[:bounds      "X"  "red"    0  "out of bounds"  (sprite-coords 7 0)]
-                [:stairs-down ">"  "green"  0  "stairs down"    (sprite-coords 3 0)]
-                [:stairs-up   "<"  "green"  0  "stairs up"      (sprite-coords 6 7)]
-                [:empty       "."  "black"  8  "a floor"        (sprite-coords 1 0)] ;normal movement, 1 food
-                [:water       "~"  "blue"   1  "water"          (sprite-coords 7 2)] ;maybe can't cross? not sure yet
-                [:rocks       "*"  "#333"   2  "rocks"          (sprite-coords 12 3)] ;2 food
+(def tile-data [[:bounds      "out of bounds" "X"  "red"    1  0    (sprite-coords 7 0)]
+                [:stairs-down "stairs down"   ">"  "green"  1  0    (sprite-coords 3 0)]
+                [:stairs-up   "stairs up"     "<"  "green"  1  0    (sprite-coords 6 7)]
+                [:start-point "start"         "X"  "white"  1  0    (sprite-coords 7 4)]
+                [:empty       "a floor"       "."  "black"  1  8    (sprite-coords 1 0)] ;normal movement, 1 food
+                [:water       "water"         "~"  "blue"   1  1    (sprite-coords 7 2)] ;maybe can't cross? not sure yet
+                [:rocks       "rocks"         "*"  "#333"   1  2    (sprite-coords 12 3)] ;2 food
                 ])
 
 (def entity-keys [:key :description :symbol :color :weight :sprite])
@@ -22,14 +23,15 @@
                   [:atk          "atk +"         "A"  "blue"    2  (sprite-coords 2 3)]
                   [:def          "def +"         "D"  "gray"    2  (sprite-coords 3 3)]
                   [:food         "food"          "F"  "brown"   2  (sprite-coords 6 8)]
+                  [:key          "key"           "K"  "yellow"  1  (sprite-coords 2 2)]
                   [:closed-chest "a chest"       "C"  "red"     1  (sprite-coords 0 8)]
                   [:open-chest   "an open chest" "C"  "red"     0  (sprite-coords 1 8)]])
 
 
-(def enemy-keys [:key :symbol :description :color :sprite :level :hp :effect])
+(def enemy-keys [:key :description :symbol :color :sprite :level :hp :dmg :effect])
 
-(def enemy-data [[:bat    "b" "bat"    "#559"       (sprite-coords 12 7)     1  2   :none]
-                 [:snake  "s" "snake"  "lightgreen" (sprite-coords 9 2)      2  5   {:poison 2}]])
+(def enemy-data [[:bat    "bat"   "b"  "#559"       (sprite-coords 12 7)  1  2  1  :none]
+                 [:snake  "snake" "s"  "lightgreen" (sprite-coords 9 2)   1  5  2  {:poison 2}]])
 
 
 (defn- keys-and-data
@@ -111,21 +113,9 @@
         [pos-x pos-y] (find-stairs-location map start-x start-y)]
     (assoc-in map [pos-y pos-x] (assoc stairs-down-tile :position [pos-x pos-y])))) ;; reverse y- and x- position when associating in map
 
-
-(defn possible-enemy-locations
-  [tile-map start-pos]
-  (let []
-    tile-map))
-
-(defn add-enemy
-  "Adds an enemy at the given location"
-  [list enemy [pos-x pos-y]]
-  (conj list {[pos-x pos-y] enemy}))
-
-(defn remove-enemy
-  "Removes an enemy from the given location"
-  [list [pos-x pos-y]]
-  (dissoc list [pos-x pos-y]))
+(defn place-start-point
+  [map [start-x start-y]]
+  (assoc-in map [start-y start-x] (assoc (first (by-key (tile-map) :start-point)) :position [start-x start-y])))
 
 (defn maybe-something?
   [tile-map enemies player-pos]
@@ -146,23 +136,23 @@
   [state]
   (maybe-something? (:tiles state) (:enemies state) (:position state)))
 
+(defn random-list
+  [state min-pct max-pct random-element]
+  (let [possible (possible-tiles state)
+        num (random-between min-pct max-pct (count possible))]
+    (->> (take num possible)
+         (map random-element)
+         (into {} conj))))
+
 (defn random-enemies-list
   [state]
-  (let [possible (possible-tiles state)
-        num-enemies (random-between 0.2 0.4 (count possible))
-        random-enemy #(rand-nth (enemy-map))]
-    (->> (take num-enemies possible)
-         (map (fn [i] {(:position i) (random-enemy)}))
-         (into {} conj))))
+  (let [random-enemy #(assoc (rand-nth (enemy-map)) :animation {:pos 0})]
+    (random-list state 0.2 0.4 (fn [i] {(:position i) (random-enemy)}))))
 
 (defn random-items-list
   [state]
-  (let [possible (possible-tiles state)
-        num-items (random-between 0.6 0.9 (count possible))
-        random-item #(get-random-tile (item-map))]
-    (->> (take num-items possible)
-         (map (fn [i] {(:position i) (random-item)}))
-         (into {} conj))))
+  (let [random-item #(get-random-tile (item-map))]
+    (random-list state 0.6 0.9 (fn [i] {(:position i) (random-item)}))))
 
 (defn add-enemies-to-map
   "Adds random enemies to the map. Requires the map to have been previously generated, and needs the state since enemies are stored separately from tiles."

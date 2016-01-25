@@ -37,6 +37,32 @@
           (display-message (str "Moved to " x ", " y)))
       (display-message state (str "Can't move there!")))))
 
+(defn dmg-to-player
+  [player dmg]
+  (let [def (:def player)
+        total-dmg (- dmg (rand-int def))]
+    (Math.max 0 total-dmg)))
+
+(defn handle-attack
+  [state enemy [x y] dmg]
+  (let [after-dmg (update-in state [:enemies [x y] :hp] - dmg)
+        enemy-dmg (+ (:level enemy) (rand-int (:dmg enemy)))
+        total-enemy-dmg (dmg-to-player (:player state) enemy-dmg)]
+    (if (<= (get-in after-dmg [:enemies [x y] :hp]) 0)
+      (-> state
+          (display-message "Defeated!")
+          (update-in [:enemies] dissoc [x y])
+          (update-in [:player :xp] + (:level enemy)))
+      (-> after-dmg
+          (assoc-in [:player :cause-of-death] (:description enemy))
+          (update-in [:player :hp] - total-enemy-dmg)
+          (display-message (str "Hit " (:description enemy) " for " dmg))
+          (display-message (str (:description enemy) " hits you for " total-enemy-dmg)))
+      )))
+
+(defn remove-item
+  [state [x y]]
+  (update-in state [:items] dissoc [x y]))
 
 
 
@@ -73,22 +99,10 @@
         (do
           (put! out-chan {:type :get-item :position [x y]})
           (move-player state x y)))
-      
+
       (let [get-description #(:description (map/get-tile-at map x y))]
         (display-message state (str "you see: " (get-description))))
       )))
-
-(defn remove-enemy-if-dead
-  [state enemy [x y] dmg]
-  (let [after-dmg (update-in state [:enemies [x y] :hp] - dmg)]
-    (if (<= (get-in after-dmg [:enemies [x y] :hp]) 0)
-      (display-message (update-in state [:enemies] dissoc [x y]) "Defeated!")
-      (display-message after-dmg (str "Hit " (:description enemy) " for " dmg))
-      )))
-
-(defn remove-item
-  [state [x y]]
-  (update-in state [:items] dissoc [x y]))
 
 (defmethod dispatch-event :attack
   [state data]
@@ -102,9 +116,21 @@
       (<! (async/timeout 3000))
       (print "done"))
     (-> state
-        (remove-enemy-if-dead enemy [x y] player-dmg)
-        ))
-)
+        (handle-attack enemy [x y] player-dmg)
+        )))
+
+(defn hp-up
+  [hp amount max]
+  (let []
+    (Math.min max (+ hp amount))))
+
+(defn heal-player
+  [state]
+  (let [amount (+ 1 (rand-int (/ (get-in state [:player :hp]) 5)))
+        max-hp (get-in state [:player :max-hp])]
+    (-> state
+        (update-in [:player :hp] hp-up amount max-hp))))
+
 (defmethod dispatch-event :get-item
   [state data]
   (let [[x y] (:position data)
@@ -134,13 +160,20 @@
           (update-in [:player :def] + 1)
           (remove-item [x y]))
 
+      :hp
+      (-> state
+          (display-message "hp +")
+          (heal-player)
+          (remove-item [x y]))
+
+
       :food
       (-> state
           (display-message "Food!")
           (update-in [:player :food] + 5)
           (remove-item [x y]))
 
-      (remove-item (display-message state (str "you pick up the " (:description item))) [x y]))))
+      (display-message state (str "there is a " (:description item))))))
 
 (defmethod dispatch-event :stairs-down
   [state data]
@@ -155,20 +188,28 @@
       state)))
 
 
-(defn dead?
-  [state]
-  (or (<= (get-in state [:player :food]) 0)
-      (<= (get-in state [:player :hp]) 0)))
-
 (defn check-for-next-state
   "Checks if the current ui/state should be updated (i.e. game over, new game, etc)"
   [state]
-  (cond
-    (dead? state)
-    (assoc state :current-ui :game-over)
+  (let [zero? #(<= (get-in state %) 0)
+        no-hp? (zero? [:player :hp])
+        starved? (zero? [:player :food])
+        dead? (or no-hp? starved?)]
+    (cond
+      starved?
+      (-> state
+          (assoc :current-ui :game-over)
+          (assoc-in [:player :cause-of-death] "Hunger"))
 
-    :else
-    state))
+      no-hp?
+      (-> state
+          (assoc :current-ui :game-over))
+
+      dead?
+      (assoc state :current-ui :game-over)
+
+      :else
+      state)))
 
 
 
@@ -193,7 +234,7 @@
     [c/game-play events-chan player tiles enemies items position messages]
 
     :game-over
-    [c/game-over]))
+    [c/game-over player]))
 
 
 (defn game-container
@@ -211,7 +252,6 @@
       [:div.container
        [:div.title "this game has no title"]
        [display-ui player tiles enemies items, position messages]
-       [:button {:on-click (handler-fn (initialize!))} "Reset game"]
        [:a.tileset-link {:href "http://makegames.tumblr.com/post/41267990744/before-spelunky-i-started-a-simple-little"} "Tileset images from here"]
        ])))
 

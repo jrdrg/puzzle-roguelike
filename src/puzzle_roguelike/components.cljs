@@ -49,9 +49,9 @@
                                         :height tile-size}
                                 :on-click (handler-fn (put! out-chan {:type :stairs-down :position [x y]}))}
      [:div.tile.scaled-image {:style {:background (str "url(roguelike_tileset.png) " sprite)
-                         :transform (str "scale(" scale-factor ")")
-                         :width img-size-x
-                         :height img-size-y}}] "@"]))
+                                      :transform (str "scale(" scale-factor ")")
+                                      :width img-size-x
+                                      :height img-size-y}}] "@"]))
 
 
 
@@ -99,6 +99,7 @@
      [stat "gold" (:gold player)]
 
      [:img {:src "roguelike_tileset.png"}]
+     [:button {:on-click (handler-fn (state/initialize!))} "Reset game"]
      ]))
 
 
@@ -112,15 +113,17 @@
     [:div.message-log
      (map message messages (map get-opacities (range msg-count 0 -1)))]))
 
-(defn game-over []
+(defn game-over [player]
   (let []
     [:div "Game Over"
+     [:div
+      [stat "Killed by" (:cause-of-death player)]]
      [:button {:on-click (handler-fn (state/initialize!))} "try again"]
      ]))
 
 (defn game-play
   [events-chan player tiles enemies items position messages]
-  [:div
+  [:div {:style {:display "flex" :flex-direction "column"}}
    [:div.game-wrapper
     [map-view tiles enemies items position events-chan]
     [stats-view player]]

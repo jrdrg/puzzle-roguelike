@@ -7,4 +7,4 @@
   (let [[sprite-x sprite-y] sprite-image-size]
     [(- (* x sprite-x)) (- (* y sprite-y))]))
 
-(def player {:key player :sprite (sprite-coords 5 1)})
+(def player {:key player :sprite (sprite-coords 0 4)})

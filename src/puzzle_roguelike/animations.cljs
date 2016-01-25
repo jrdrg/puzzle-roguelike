@@ -3,6 +3,9 @@
             [puzzle-roguelike.state :as state :refer [game-state]]))
 
 (def last-ts (atom nil))
+(def deg-180 Math.PI)
+(def deg-90 (/ Math.PI 2))
+
 
 (defn update! [delta]
   (let []
