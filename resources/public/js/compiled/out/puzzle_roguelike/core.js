@@ -39,10 +39,10 @@ var def = new cljs.core.Keyword(null,"def","def",-1043430536).cljs$core$IFn$_inv
 var total_dmg = (dmg - cljs.core.rand_int.call(null,def));
 return Math.max((0),total_dmg);
 });
-puzzle_roguelike.core.handle_attack = (function puzzle_roguelike$core$handle_attack(state,enemy,p__59869,dmg){
-var vec__59871 = p__59869;
-var x = cljs.core.nth.call(null,vec__59871,(0),null);
-var y = cljs.core.nth.call(null,vec__59871,(1),null);
+puzzle_roguelike.core.handle_attack = (function puzzle_roguelike$core$handle_attack(state,enemy,p__47323,dmg){
+var vec__47325 = p__47323;
+var x = cljs.core.nth.call(null,vec__47325,(0),null);
+var y = cljs.core.nth.call(null,vec__47325,(1),null);
 var after_dmg = cljs.core.update_in.call(null,state,new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"enemies","enemies",2114285722),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null),new cljs.core.Keyword(null,"hp","hp",-1541237831)], null),cljs.core._,dmg);
 var enemy_dmg = (new cljs.core.Keyword(null,"level","level",1290497552).cljs$core$IFn$_invoke$arity$1(enemy) + cljs.core.rand_int.call(null,new cljs.core.Keyword(null,"dmg","dmg",-401654239).cljs$core$IFn$_invoke$arity$1(enemy)));
 var total_enemy_dmg = puzzle_roguelike.core.dmg_to_player.call(null,new cljs.core.Keyword(null,"player","player",-97687400).cljs$core$IFn$_invoke$arity$1(state),enemy_dmg);
@@ -52,10 +52,10 @@ return cljs.core.update_in.call(null,cljs.core.update_in.call(null,puzzle_roguel
 return puzzle_roguelike.core.display_message.call(null,puzzle_roguelike.core.display_message.call(null,cljs.core.update_in.call(null,cljs.core.assoc_in.call(null,after_dmg,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"cause-of-death","cause-of-death",-887003024)], null),new cljs.core.Keyword(null,"description","description",-1428560544).cljs$core$IFn$_invoke$arity$1(enemy)),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"hp","hp",-1541237831)], null),cljs.core._,total_enemy_dmg),[cljs.core.str("Hit "),cljs.core.str(new cljs.core.Keyword(null,"description","description",-1428560544).cljs$core$IFn$_invoke$arity$1(enemy)),cljs.core.str(" for "),cljs.core.str(dmg)].join('')),[cljs.core.str(new cljs.core.Keyword(null,"description","description",-1428560544).cljs$core$IFn$_invoke$arity$1(enemy)),cljs.core.str(" hits you for "),cljs.core.str(total_enemy_dmg)].join(''));
 }
 });
-puzzle_roguelike.core.remove_item = (function puzzle_roguelike$core$remove_item(state,p__59872){
-var vec__59874 = p__59872;
-var x = cljs.core.nth.call(null,vec__59874,(0),null);
-var y = cljs.core.nth.call(null,vec__59874,(1),null);
+puzzle_roguelike.core.remove_item = (function puzzle_roguelike$core$remove_item(state,p__47326){
+var vec__47328 = p__47326;
+var x = cljs.core.nth.call(null,vec__47328,(0),null);
+var y = cljs.core.nth.call(null,vec__47328,(1),null);
 return cljs.core.update_in.call(null,state,new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"items","items",1031954938)], null),cljs.core.dissoc,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
 });
 if(typeof puzzle_roguelike.core.dispatch_event !== 'undefined'){
@@ -77,9 +77,9 @@ return new cljs.core.Keyword(null,"type","type",1174270348).cljs$core$IFn$_invok
 }
 cljs.core._add_method.call(null,puzzle_roguelike.core.dispatch_event,new cljs.core.Keyword(null,"move","move",-2110884309),(function (state,data){
 var out_chan = puzzle_roguelike.core.events_chan;
-var vec__59875 = new cljs.core.Keyword(null,"position","position",-2011731912).cljs$core$IFn$_invoke$arity$1(data);
-var x = cljs.core.nth.call(null,vec__59875,(0),null);
-var y = cljs.core.nth.call(null,vec__59875,(1),null);
+var vec__47329 = new cljs.core.Keyword(null,"position","position",-2011731912).cljs$core$IFn$_invoke$arity$1(data);
+var x = cljs.core.nth.call(null,vec__47329,(0),null);
+var y = cljs.core.nth.call(null,vec__47329,(1),null);
 var map = new cljs.core.Keyword(null,"tiles","tiles",178505240).cljs$core$IFn$_invoke$arity$1(state);
 var enemy_QMARK_ = cljs.core.contains_QMARK_.call(null,new cljs.core.Keyword(null,"enemies","enemies",2114285722).cljs$core$IFn$_invoke$arity$1(state),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
 var item_QMARK_ = cljs.core.contains_QMARK_.call(null,new cljs.core.Keyword(null,"items","items",1031954938).cljs$core$IFn$_invoke$arity$1(state),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
@@ -107,69 +107,69 @@ return null;
 }
 }
 } else {
-var get_description = ((function (out_chan,vec__59875,x,y,map,enemy_QMARK_,item_QMARK_,can_move_QMARK_){
+var get_description = ((function (out_chan,vec__47329,x,y,map,enemy_QMARK_,item_QMARK_,can_move_QMARK_){
 return (function (){
 return new cljs.core.Keyword(null,"description","description",-1428560544).cljs$core$IFn$_invoke$arity$1(puzzle_roguelike.map.get_tile_at.call(null,map,x,y));
-});})(out_chan,vec__59875,x,y,map,enemy_QMARK_,item_QMARK_,can_move_QMARK_))
+});})(out_chan,vec__47329,x,y,map,enemy_QMARK_,item_QMARK_,can_move_QMARK_))
 ;
 return puzzle_roguelike.core.display_message.call(null,state,[cljs.core.str("you see: "),cljs.core.str(get_description.call(null))].join(''));
 }
 }));
 cljs.core._add_method.call(null,puzzle_roguelike.core.dispatch_event,new cljs.core.Keyword(null,"attack","attack",1957061788),(function (state,data){
-var vec__59876 = new cljs.core.Keyword(null,"position","position",-2011731912).cljs$core$IFn$_invoke$arity$1(data);
-var x = cljs.core.nth.call(null,vec__59876,(0),null);
-var y = cljs.core.nth.call(null,vec__59876,(1),null);
+var vec__47330 = new cljs.core.Keyword(null,"position","position",-2011731912).cljs$core$IFn$_invoke$arity$1(data);
+var x = cljs.core.nth.call(null,vec__47330,(0),null);
+var y = cljs.core.nth.call(null,vec__47330,(1),null);
 var enemy = cljs.core.get.call(null,new cljs.core.Keyword(null,"enemies","enemies",2114285722).cljs$core$IFn$_invoke$arity$1(state),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
 var player_atk = cljs.core.get_in.call(null,state,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"atk","atk",-473986036)], null));
 var player_dmg = (player_atk + cljs.core.rand_int.call(null,player_atk));
 var enemy_dmg = cljs.core.rand_int.call(null,new cljs.core.Keyword(null,"level","level",1290497552).cljs$core$IFn$_invoke$arity$1(enemy));
-var c__18924__auto___59895 = cljs.core.async.chan.call(null,(1));
-cljs.core.async.impl.dispatch.run.call(null,((function (c__18924__auto___59895,vec__59876,x,y,enemy,player_atk,player_dmg,enemy_dmg){
+var c__18924__auto___47349 = cljs.core.async.chan.call(null,(1));
+cljs.core.async.impl.dispatch.run.call(null,((function (c__18924__auto___47349,vec__47330,x,y,enemy,player_atk,player_dmg,enemy_dmg){
 return (function (){
-var f__18925__auto__ = (function (){var switch__18903__auto__ = ((function (c__18924__auto___59895,vec__59876,x,y,enemy,player_atk,player_dmg,enemy_dmg){
-return (function (state_59884){
-var state_val_59885 = (state_59884[(1)]);
-if((state_val_59885 === (1))){
-var inst_59877 = [cljs.core.str("timeout 1000"),cljs.core.str(enemy)].join('');
-var inst_59878 = cljs.core.print.call(null,inst_59877);
-var inst_59879 = cljs.core.async.timeout.call(null,(3000));
-var state_59884__$1 = (function (){var statearr_59886 = state_59884;
-(statearr_59886[(7)] = inst_59878);
+var f__18925__auto__ = (function (){var switch__18903__auto__ = ((function (c__18924__auto___47349,vec__47330,x,y,enemy,player_atk,player_dmg,enemy_dmg){
+return (function (state_47338){
+var state_val_47339 = (state_47338[(1)]);
+if((state_val_47339 === (1))){
+var inst_47331 = [cljs.core.str("timeout 1000"),cljs.core.str(enemy)].join('');
+var inst_47332 = cljs.core.print.call(null,inst_47331);
+var inst_47333 = cljs.core.async.timeout.call(null,(3000));
+var state_47338__$1 = (function (){var statearr_47340 = state_47338;
+(statearr_47340[(7)] = inst_47332);
 
-return statearr_59886;
+return statearr_47340;
 })();
-return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null,state_59884__$1,(2),inst_59879);
+return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null,state_47338__$1,(2),inst_47333);
 } else {
-if((state_val_59885 === (2))){
-var inst_59881 = (state_59884[(2)]);
-var inst_59882 = cljs.core.print.call(null,"done");
-var state_59884__$1 = (function (){var statearr_59887 = state_59884;
-(statearr_59887[(8)] = inst_59881);
+if((state_val_47339 === (2))){
+var inst_47335 = (state_47338[(2)]);
+var inst_47336 = cljs.core.print.call(null,"done");
+var state_47338__$1 = (function (){var statearr_47341 = state_47338;
+(statearr_47341[(8)] = inst_47335);
 
-return statearr_59887;
+return statearr_47341;
 })();
-return cljs.core.async.impl.ioc_helpers.return_chan.call(null,state_59884__$1,inst_59882);
+return cljs.core.async.impl.ioc_helpers.return_chan.call(null,state_47338__$1,inst_47336);
 } else {
 return null;
 }
 }
-});})(c__18924__auto___59895,vec__59876,x,y,enemy,player_atk,player_dmg,enemy_dmg))
+});})(c__18924__auto___47349,vec__47330,x,y,enemy,player_atk,player_dmg,enemy_dmg))
 ;
-return ((function (switch__18903__auto__,c__18924__auto___59895,vec__59876,x,y,enemy,player_atk,player_dmg,enemy_dmg){
+return ((function (switch__18903__auto__,c__18924__auto___47349,vec__47330,x,y,enemy,player_atk,player_dmg,enemy_dmg){
 return (function() {
 var puzzle_roguelike$core$state_machine__18904__auto__ = null;
 var puzzle_roguelike$core$state_machine__18904__auto____0 = (function (){
-var statearr_59891 = [null,null,null,null,null,null,null,null,null];
-(statearr_59891[(0)] = puzzle_roguelike$core$state_machine__18904__auto__);
+var statearr_47345 = [null,null,null,null,null,null,null,null,null];
+(statearr_47345[(0)] = puzzle_roguelike$core$state_machine__18904__auto__);
 
-(statearr_59891[(1)] = (1));
+(statearr_47345[(1)] = (1));
 
-return statearr_59891;
+return statearr_47345;
 });
-var puzzle_roguelike$core$state_machine__18904__auto____1 = (function (state_59884){
+var puzzle_roguelike$core$state_machine__18904__auto____1 = (function (state_47338){
 while(true){
 var ret_value__18905__auto__ = (function (){try{while(true){
-var result__18906__auto__ = switch__18903__auto__.call(null,state_59884);
+var result__18906__auto__ = switch__18903__auto__.call(null,state_47338);
 if(cljs.core.keyword_identical_QMARK_.call(null,result__18906__auto__,new cljs.core.Keyword(null,"recur","recur",-437573268))){
 continue;
 } else {
@@ -177,23 +177,23 @@ return result__18906__auto__;
 }
 break;
 }
-}catch (e59892){if((e59892 instanceof Object)){
-var ex__18907__auto__ = e59892;
-var statearr_59893_59896 = state_59884;
-(statearr_59893_59896[(5)] = ex__18907__auto__);
+}catch (e47346){if((e47346 instanceof Object)){
+var ex__18907__auto__ = e47346;
+var statearr_47347_47350 = state_47338;
+(statearr_47347_47350[(5)] = ex__18907__auto__);
 
 
-cljs.core.async.impl.ioc_helpers.process_exception.call(null,state_59884);
+cljs.core.async.impl.ioc_helpers.process_exception.call(null,state_47338);
 
 return new cljs.core.Keyword(null,"recur","recur",-437573268);
 } else {
-throw e59892;
+throw e47346;
 
 }
 }})();
 if(cljs.core.keyword_identical_QMARK_.call(null,ret_value__18905__auto__,new cljs.core.Keyword(null,"recur","recur",-437573268))){
-var G__59897 = state_59884;
-state_59884 = G__59897;
+var G__47351 = state_47338;
+state_47338 = G__47351;
 continue;
 } else {
 return ret_value__18905__auto__;
@@ -201,12 +201,12 @@ return ret_value__18905__auto__;
 break;
 }
 });
-puzzle_roguelike$core$state_machine__18904__auto__ = function(state_59884){
+puzzle_roguelike$core$state_machine__18904__auto__ = function(state_47338){
 switch(arguments.length){
 case 0:
 return puzzle_roguelike$core$state_machine__18904__auto____0.call(this);
 case 1:
-return puzzle_roguelike$core$state_machine__18904__auto____1.call(this,state_59884);
+return puzzle_roguelike$core$state_machine__18904__auto____1.call(this,state_47338);
 }
 throw(new Error('Invalid arity: ' + arguments.length));
 };
@@ -214,15 +214,15 @@ puzzle_roguelike$core$state_machine__18904__auto__.cljs$core$IFn$_invoke$arity$0
 puzzle_roguelike$core$state_machine__18904__auto__.cljs$core$IFn$_invoke$arity$1 = puzzle_roguelike$core$state_machine__18904__auto____1;
 return puzzle_roguelike$core$state_machine__18904__auto__;
 })()
-;})(switch__18903__auto__,c__18924__auto___59895,vec__59876,x,y,enemy,player_atk,player_dmg,enemy_dmg))
+;})(switch__18903__auto__,c__18924__auto___47349,vec__47330,x,y,enemy,player_atk,player_dmg,enemy_dmg))
 })();
-var state__18926__auto__ = (function (){var statearr_59894 = f__18925__auto__.call(null);
-(statearr_59894[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__18924__auto___59895);
+var state__18926__auto__ = (function (){var statearr_47348 = f__18925__auto__.call(null);
+(statearr_47348[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__18924__auto___47349);
 
-return statearr_59894;
+return statearr_47348;
 })();
 return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null,state__18926__auto__);
-});})(c__18924__auto___59895,vec__59876,x,y,enemy,player_atk,player_dmg,enemy_dmg))
+});})(c__18924__auto___47349,vec__47330,x,y,enemy,player_atk,player_dmg,enemy_dmg))
 );
 
 
@@ -237,28 +237,28 @@ var max_hp = cljs.core.get_in.call(null,state,new cljs.core.PersistentVector(nul
 return cljs.core.update_in.call(null,state,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"hp","hp",-1541237831)], null),puzzle_roguelike.core.hp_up,amount,max_hp);
 });
 cljs.core._add_method.call(null,puzzle_roguelike.core.dispatch_event,new cljs.core.Keyword(null,"get-item","get-item",-445412473),(function (state,data){
-var vec__59898 = new cljs.core.Keyword(null,"position","position",-2011731912).cljs$core$IFn$_invoke$arity$1(data);
-var x = cljs.core.nth.call(null,vec__59898,(0),null);
-var y = cljs.core.nth.call(null,vec__59898,(1),null);
+var vec__47352 = new cljs.core.Keyword(null,"position","position",-2011731912).cljs$core$IFn$_invoke$arity$1(data);
+var x = cljs.core.nth.call(null,vec__47352,(0),null);
+var y = cljs.core.nth.call(null,vec__47352,(1),null);
 var item = cljs.core.get.call(null,new cljs.core.Keyword(null,"items","items",1031954938).cljs$core$IFn$_invoke$arity$1(state),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
-var pred__59899 = cljs.core._EQ_;
-var expr__59900 = new cljs.core.Keyword(null,"key","key",-1516042587).cljs$core$IFn$_invoke$arity$1(item);
-if(cljs.core.truth_(pred__59899.call(null,new cljs.core.Keyword(null,"coin","coin",-227557189),expr__59900))){
+var pred__47353 = cljs.core._EQ_;
+var expr__47354 = new cljs.core.Keyword(null,"key","key",-1516042587).cljs$core$IFn$_invoke$arity$1(item);
+if(cljs.core.truth_(pred__47353.call(null,new cljs.core.Keyword(null,"coin","coin",-227557189),expr__47354))){
 return puzzle_roguelike.core.remove_item.call(null,cljs.core.update_in.call(null,puzzle_roguelike.core.display_message.call(null,state,"Money!"),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"gold","gold",-806826416)], null),cljs.core._PLUS_,(1)),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
 } else {
-if(cljs.core.truth_(pred__59899.call(null,new cljs.core.Keyword(null,"moneybag","moneybag",-1896929373),expr__59900))){
+if(cljs.core.truth_(pred__47353.call(null,new cljs.core.Keyword(null,"moneybag","moneybag",-1896929373),expr__47354))){
 return puzzle_roguelike.core.remove_item.call(null,cljs.core.update_in.call(null,puzzle_roguelike.core.display_message.call(null,state,"$$$$$$$"),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"gold","gold",-806826416)], null),cljs.core._PLUS_,(10)),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
 } else {
-if(cljs.core.truth_(pred__59899.call(null,new cljs.core.Keyword(null,"atk","atk",-473986036),expr__59900))){
+if(cljs.core.truth_(pred__47353.call(null,new cljs.core.Keyword(null,"atk","atk",-473986036),expr__47354))){
 return puzzle_roguelike.core.remove_item.call(null,cljs.core.update_in.call(null,puzzle_roguelike.core.display_message.call(null,state,"atk +"),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"atk","atk",-473986036)], null),cljs.core._PLUS_,(1)),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
 } else {
-if(cljs.core.truth_(pred__59899.call(null,new cljs.core.Keyword(null,"def","def",-1043430536),expr__59900))){
+if(cljs.core.truth_(pred__47353.call(null,new cljs.core.Keyword(null,"def","def",-1043430536),expr__47354))){
 return puzzle_roguelike.core.remove_item.call(null,cljs.core.update_in.call(null,puzzle_roguelike.core.display_message.call(null,state,"def +"),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"def","def",-1043430536)], null),cljs.core._PLUS_,(1)),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
 } else {
-if(cljs.core.truth_(pred__59899.call(null,new cljs.core.Keyword(null,"hp","hp",-1541237831),expr__59900))){
+if(cljs.core.truth_(pred__47353.call(null,new cljs.core.Keyword(null,"hp","hp",-1541237831),expr__47354))){
 return puzzle_roguelike.core.remove_item.call(null,puzzle_roguelike.core.heal_player.call(null,puzzle_roguelike.core.display_message.call(null,state,"hp +")),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
 } else {
-if(cljs.core.truth_(pred__59899.call(null,new cljs.core.Keyword(null,"food","food",1842183121),expr__59900))){
+if(cljs.core.truth_(pred__47353.call(null,new cljs.core.Keyword(null,"food","food",1842183121),expr__47354))){
 return puzzle_roguelike.core.remove_item.call(null,cljs.core.update_in.call(null,puzzle_roguelike.core.display_message.call(null,state,"Food!"),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"food","food",1842183121)], null),cljs.core._PLUS_,(5)),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,y], null));
 } else {
 return puzzle_roguelike.core.display_message.call(null,state,[cljs.core.str("there is a "),cljs.core.str(new cljs.core.Keyword(null,"description","description",-1428560544).cljs$core$IFn$_invoke$arity$1(item))].join(''));
@@ -270,9 +270,9 @@ return puzzle_roguelike.core.display_message.call(null,state,[cljs.core.str("the
 }
 }));
 cljs.core._add_method.call(null,puzzle_roguelike.core.dispatch_event,new cljs.core.Keyword(null,"stairs-down","stairs-down",951351901),(function (state,data){
-var vec__59902 = new cljs.core.Keyword(null,"position","position",-2011731912).cljs$core$IFn$_invoke$arity$1(data);
-var x = cljs.core.nth.call(null,vec__59902,(0),null);
-var y = cljs.core.nth.call(null,vec__59902,(1),null);
+var vec__47356 = new cljs.core.Keyword(null,"position","position",-2011731912).cljs$core$IFn$_invoke$arity$1(data);
+var x = cljs.core.nth.call(null,vec__47356,(0),null);
+var y = cljs.core.nth.call(null,vec__47356,(1),null);
 var map = new cljs.core.Keyword(null,"tiles","tiles",178505240).cljs$core$IFn$_invoke$arity$1(state);
 var next_floor = (new cljs.core.Keyword(null,"floor","floor",1882041021).cljs$core$IFn$_invoke$arity$1(state) + (1));
 if(cljs.core.truth_(puzzle_roguelike.map.stairs_down_QMARK_.call(null,map,x,y))){
@@ -285,8 +285,8 @@ return state;
  * Checks if the current ui/state should be updated (i.e. game over, new game, etc)
  */
 puzzle_roguelike.core.check_for_next_state = (function puzzle_roguelike$core$check_for_next_state(state){
-var zero_QMARK_ = (function (p1__59903_SHARP_){
-return (cljs.core.get_in.call(null,state,p1__59903_SHARP_) <= (0));
+var zero_QMARK_ = (function (p1__47357_SHARP_){
+return (cljs.core.get_in.call(null,state,p1__47357_SHARP_) <= (0));
 });
 var no_hp_QMARK_ = zero_QMARK_.call(null,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"hp","hp",-1541237831)], null));
 var starved_QMARK_ = zero_QMARK_.call(null,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"food","food",1842183121)], null));
@@ -298,7 +298,7 @@ return starved_QMARK_;
 }
 })();
 if(cljs.core.truth_(starved_QMARK_)){
-return cljs.core.assoc_in.call(null,cljs.core.assoc.call(null,state,new cljs.core.Keyword(null,"current-ui","current-ui",-1846031844),new cljs.core.Keyword(null,"game-over","game-over",-607322695)),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"cause-of-death","cause-of-death",-887003024)], null),"Hunger");
+return cljs.core.assoc_in.call(null,cljs.core.assoc.call(null,state,new cljs.core.Keyword(null,"current-ui","current-ui",-1846031844),new cljs.core.Keyword(null,"game-over","game-over",-607322695)),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"player","player",-97687400),new cljs.core.Keyword(null,"cause-of-death","cause-of-death",-887003024)], null),"hunger");
 } else {
 if(cljs.core.truth_(no_hp_QMARK_)){
 return cljs.core.assoc.call(null,state,new cljs.core.Keyword(null,"current-ui","current-ui",-1846031844),new cljs.core.Keyword(null,"game-over","game-over",-607322695));
@@ -320,84 +320,84 @@ var c__18924__auto__ = cljs.core.async.chan.call(null,(1));
 cljs.core.async.impl.dispatch.run.call(null,((function (c__18924__auto__){
 return (function (){
 var f__18925__auto__ = (function (){var switch__18903__auto__ = ((function (c__18924__auto__){
-return (function (state_59953){
-var state_val_59954 = (state_59953[(1)]);
-if((state_val_59954 === (1))){
-var state_59953__$1 = state_59953;
-var statearr_59955_59970 = state_59953__$1;
-(statearr_59955_59970[(2)] = null);
+return (function (state_47407){
+var state_val_47408 = (state_47407[(1)]);
+if((state_val_47408 === (1))){
+var state_47407__$1 = state_47407;
+var statearr_47409_47424 = state_47407__$1;
+(statearr_47409_47424[(2)] = null);
 
-(statearr_59955_59970[(1)] = (2));
+(statearr_47409_47424[(1)] = (2));
 
 
 return new cljs.core.Keyword(null,"recur","recur",-437573268);
 } else {
-if((state_val_59954 === (2))){
-var state_59953__$1 = state_59953;
-return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null,state_59953__$1,(4),in_chan);
+if((state_val_47408 === (2))){
+var state_47407__$1 = state_47407;
+return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null,state_47407__$1,(4),in_chan);
 } else {
-if((state_val_59954 === (3))){
-var inst_59951 = (state_59953[(2)]);
-var state_59953__$1 = state_59953;
-return cljs.core.async.impl.ioc_helpers.return_chan.call(null,state_59953__$1,inst_59951);
+if((state_val_47408 === (3))){
+var inst_47405 = (state_47407[(2)]);
+var state_47407__$1 = state_47407;
+return cljs.core.async.impl.ioc_helpers.return_chan.call(null,state_47407__$1,inst_47405);
 } else {
-if((state_val_59954 === (4))){
-var inst_59939 = (state_59953[(7)]);
-var inst_59939__$1 = (state_59953[(2)]);
-var inst_59940 = new cljs.core.Keyword(null,"type","type",1174270348).cljs$core$IFn$_invoke$arity$1(inst_59939__$1);
-var state_59953__$1 = (function (){var statearr_59956 = state_59953;
-(statearr_59956[(7)] = inst_59939__$1);
+if((state_val_47408 === (4))){
+var inst_47393 = (state_47407[(7)]);
+var inst_47393__$1 = (state_47407[(2)]);
+var inst_47394 = new cljs.core.Keyword(null,"type","type",1174270348).cljs$core$IFn$_invoke$arity$1(inst_47393__$1);
+var state_47407__$1 = (function (){var statearr_47410 = state_47407;
+(statearr_47410[(7)] = inst_47393__$1);
 
-return statearr_59956;
+return statearr_47410;
 })();
-if(cljs.core.truth_(inst_59940)){
-var statearr_59957_59971 = state_59953__$1;
-(statearr_59957_59971[(1)] = (5));
+if(cljs.core.truth_(inst_47394)){
+var statearr_47411_47425 = state_47407__$1;
+(statearr_47411_47425[(1)] = (5));
 
 } else {
-var statearr_59958_59972 = state_59953__$1;
-(statearr_59958_59972[(1)] = (6));
+var statearr_47412_47426 = state_47407__$1;
+(statearr_47412_47426[(1)] = (6));
 
 }
 
 return new cljs.core.Keyword(null,"recur","recur",-437573268);
 } else {
-if((state_val_59954 === (5))){
-var inst_59939 = (state_59953[(7)]);
-var inst_59942 = cljs.core.deref.call(null,puzzle_roguelike.state.game_state);
-var inst_59943 = puzzle_roguelike.core.dispatch_event.call(null,inst_59942,inst_59939);
-var inst_59944 = puzzle_roguelike.core.check_for_next_state.call(null,inst_59943);
-var inst_59945 = cljs.core.reset_BANG_.call(null,puzzle_roguelike.state.game_state,inst_59944);
-var state_59953__$1 = state_59953;
-var statearr_59959_59973 = state_59953__$1;
-(statearr_59959_59973[(2)] = inst_59945);
+if((state_val_47408 === (5))){
+var inst_47393 = (state_47407[(7)]);
+var inst_47396 = cljs.core.deref.call(null,puzzle_roguelike.state.game_state);
+var inst_47397 = puzzle_roguelike.core.dispatch_event.call(null,inst_47396,inst_47393);
+var inst_47398 = puzzle_roguelike.core.check_for_next_state.call(null,inst_47397);
+var inst_47399 = cljs.core.reset_BANG_.call(null,puzzle_roguelike.state.game_state,inst_47398);
+var state_47407__$1 = state_47407;
+var statearr_47413_47427 = state_47407__$1;
+(statearr_47413_47427[(2)] = inst_47399);
 
-(statearr_59959_59973[(1)] = (7));
-
-
-return new cljs.core.Keyword(null,"recur","recur",-437573268);
-} else {
-if((state_val_59954 === (6))){
-var state_59953__$1 = state_59953;
-var statearr_59960_59974 = state_59953__$1;
-(statearr_59960_59974[(2)] = null);
-
-(statearr_59960_59974[(1)] = (7));
+(statearr_47413_47427[(1)] = (7));
 
 
 return new cljs.core.Keyword(null,"recur","recur",-437573268);
 } else {
-if((state_val_59954 === (7))){
-var inst_59948 = (state_59953[(2)]);
-var state_59953__$1 = (function (){var statearr_59961 = state_59953;
-(statearr_59961[(8)] = inst_59948);
+if((state_val_47408 === (6))){
+var state_47407__$1 = state_47407;
+var statearr_47414_47428 = state_47407__$1;
+(statearr_47414_47428[(2)] = null);
 
-return statearr_59961;
+(statearr_47414_47428[(1)] = (7));
+
+
+return new cljs.core.Keyword(null,"recur","recur",-437573268);
+} else {
+if((state_val_47408 === (7))){
+var inst_47402 = (state_47407[(2)]);
+var state_47407__$1 = (function (){var statearr_47415 = state_47407;
+(statearr_47415[(8)] = inst_47402);
+
+return statearr_47415;
 })();
-var statearr_59962_59975 = state_59953__$1;
-(statearr_59962_59975[(2)] = null);
+var statearr_47416_47429 = state_47407__$1;
+(statearr_47416_47429[(2)] = null);
 
-(statearr_59962_59975[(1)] = (2));
+(statearr_47416_47429[(1)] = (2));
 
 
 return new cljs.core.Keyword(null,"recur","recur",-437573268);
@@ -416,17 +416,17 @@ return ((function (switch__18903__auto__,c__18924__auto__){
 return (function() {
 var puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto__ = null;
 var puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto____0 = (function (){
-var statearr_59966 = [null,null,null,null,null,null,null,null,null];
-(statearr_59966[(0)] = puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto__);
+var statearr_47420 = [null,null,null,null,null,null,null,null,null];
+(statearr_47420[(0)] = puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto__);
 
-(statearr_59966[(1)] = (1));
+(statearr_47420[(1)] = (1));
 
-return statearr_59966;
+return statearr_47420;
 });
-var puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto____1 = (function (state_59953){
+var puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto____1 = (function (state_47407){
 while(true){
 var ret_value__18905__auto__ = (function (){try{while(true){
-var result__18906__auto__ = switch__18903__auto__.call(null,state_59953);
+var result__18906__auto__ = switch__18903__auto__.call(null,state_47407);
 if(cljs.core.keyword_identical_QMARK_.call(null,result__18906__auto__,new cljs.core.Keyword(null,"recur","recur",-437573268))){
 continue;
 } else {
@@ -434,23 +434,23 @@ return result__18906__auto__;
 }
 break;
 }
-}catch (e59967){if((e59967 instanceof Object)){
-var ex__18907__auto__ = e59967;
-var statearr_59968_59976 = state_59953;
-(statearr_59968_59976[(5)] = ex__18907__auto__);
+}catch (e47421){if((e47421 instanceof Object)){
+var ex__18907__auto__ = e47421;
+var statearr_47422_47430 = state_47407;
+(statearr_47422_47430[(5)] = ex__18907__auto__);
 
 
-cljs.core.async.impl.ioc_helpers.process_exception.call(null,state_59953);
+cljs.core.async.impl.ioc_helpers.process_exception.call(null,state_47407);
 
 return new cljs.core.Keyword(null,"recur","recur",-437573268);
 } else {
-throw e59967;
+throw e47421;
 
 }
 }})();
 if(cljs.core.keyword_identical_QMARK_.call(null,ret_value__18905__auto__,new cljs.core.Keyword(null,"recur","recur",-437573268))){
-var G__59977 = state_59953;
-state_59953 = G__59977;
+var G__47431 = state_47407;
+state_47407 = G__47431;
 continue;
 } else {
 return ret_value__18905__auto__;
@@ -458,12 +458,12 @@ return ret_value__18905__auto__;
 break;
 }
 });
-puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto__ = function(state_59953){
+puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto__ = function(state_47407){
 switch(arguments.length){
 case 0:
 return puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto____0.call(this);
 case 1:
-return puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto____1.call(this,state_59953);
+return puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto____1.call(this,state_47407);
 }
 throw(new Error('Invalid arity: ' + arguments.length));
 };
@@ -473,10 +473,10 @@ return puzzle_roguelike$core$run_event_loop_$_state_machine__18904__auto__;
 })()
 ;})(switch__18903__auto__,c__18924__auto__))
 })();
-var state__18926__auto__ = (function (){var statearr_59969 = f__18925__auto__.call(null);
-(statearr_59969[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__18924__auto__);
+var state__18926__auto__ = (function (){var statearr_47423 = f__18925__auto__.call(null);
+(statearr_47423[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__18924__auto__);
 
-return statearr_59969;
+return statearr_47423;
 })();
 return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null,state__18926__auto__);
 });})(c__18924__auto__))
@@ -485,15 +485,15 @@ return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null,stat
 return c__18924__auto__;
 });
 puzzle_roguelike.core.display_ui = (function puzzle_roguelike$core$display_ui(player,tiles,enemies,items,position,messages){
-var pred__59981 = cljs.core._EQ_;
-var expr__59982 = new cljs.core.Keyword(null,"current-ui","current-ui",-1846031844).cljs$core$IFn$_invoke$arity$1(cljs.core.deref.call(null,puzzle_roguelike.state.game_state));
-if(cljs.core.truth_(pred__59981.call(null,new cljs.core.Keyword(null,"main","main",-2117802661),expr__59982))){
+var pred__47435 = cljs.core._EQ_;
+var expr__47436 = new cljs.core.Keyword(null,"current-ui","current-ui",-1846031844).cljs$core$IFn$_invoke$arity$1(cljs.core.deref.call(null,puzzle_roguelike.state.game_state));
+if(cljs.core.truth_(pred__47435.call(null,new cljs.core.Keyword(null,"main","main",-2117802661),expr__47436))){
 return new cljs.core.PersistentVector(null, 8, 5, cljs.core.PersistentVector.EMPTY_NODE, [puzzle_roguelike.components.game_play,puzzle_roguelike.core.events_chan,player,tiles,enemies,items,position,messages], null);
 } else {
-if(cljs.core.truth_(pred__59981.call(null,new cljs.core.Keyword(null,"game-over","game-over",-607322695),expr__59982))){
+if(cljs.core.truth_(pred__47435.call(null,new cljs.core.Keyword(null,"game-over","game-over",-607322695),expr__47436))){
 return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [puzzle_roguelike.components.game_over,player], null);
 } else {
-throw (new Error([cljs.core.str("No matching clause: "),cljs.core.str(expr__59982)].join('')));
+throw (new Error([cljs.core.str("No matching clause: "),cljs.core.str(expr__47436)].join('')));
 }
 }
 });
@@ -520,4 +520,4 @@ puzzle_roguelike.core.on_js_reload = (function puzzle_roguelike$core$on_js_reloa
 return null;
 });
 
-//# sourceMappingURL=core.js.map?rel=1453730958677
+//# sourceMappingURL=core.js.map?rel=1454291747976

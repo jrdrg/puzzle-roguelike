@@ -5,14 +5,31 @@
             [puzzle-roguelike.images :as img :refer [sprite-image-size player]])
   (:require-macros [puzzle-roguelike.macros :as rm :refer [handler-fn]]))
 
-(def tile-size 40)
-(def img-size [16 16])
+(def tile-size 48)
+(def scaled-img-size [32 48])
+(def monster-tiles "Monsters.png")
+(def terrain-tiles "Terrain_Objects.png")
+(def item-tiles "Items.png")
 
-(def scale-factor (/ tile-size (get sprite-image-size 0)))
+(def scale-factors (mapv #(/ %1 %2) scaled-img-size sprite-image-size))
+
 
 (defn- sprite-to-string
   [[x y]]
   (str x "px " y "px"))
+
+(defn- transform-scale
+  []
+  (let [[scale-factor-x scale-factor-y] scale-factors]
+    (str "scaleX(" scale-factor-x ") scaleY(" scale-factor-y ")")))
+
+(defn entity-view
+  [tile-x tile-y tiles-img sprite]
+  (let [[img-size-x img-size-y] sprite-image-size]
+    [:div.scaled-image.sprite {:style {:background (str "url(" tiles-img ") " sprite)
+                                       :width img-size-x
+                                       :height img-size-y}}]))
+
 
 
 (defn tile-view [x y tile enemy item player? out-chan]
@@ -21,20 +38,21 @@
         symbol (:symbol entity)
         color (:color entity)
         sprite (apply str (map #(str % "px ") (:sprite entity)))]
-    [:div.tile.noselect.scaled-image
-     {:style {:background (str "url(roguelike_tileset.png) " (sprite-to-string (:sprite tile)) " black")
-              :transform (str "scale(" scale-factor ")")
-              :color (or color "antiquewhite")
-              :top (* y tile-size)
-              :left (* x tile-size)
-              :height img-size-y
-              :width img-size-x}
-      :on-click (handler-fn (put! out-chan {:type :move :position [x y]}))}
-     [:div.scaled-image.sprite
-      {:style {:background (str "url(roguelike_tileset.png) " sprite)
-               ;;:transform (str "scale(" scale-factor ")")
-               :width img-size-x
-               :height img-size-y}}]
+    [:div.tile.noselect.scaled-image {:style {:background (str "url(" terrain-tiles ") " (sprite-to-string (:sprite tile)) " black")
+                                              :transform (transform-scale)
+                                              :color (or color "antiquewhite")
+                                              :top (* y tile-size)
+                                              :left (* x tile-size)
+                                              :height img-size-y
+                                              :width img-size-x}
+                                      :on-click (handler-fn (put! out-chan {:type :move :position [x y]}))}
+     (cond
+       enemy
+       [entity-view x y monster-tiles sprite]
+
+       item
+       [entity-view x y item-tiles sprite]
+       )
      ]))
 
 
@@ -48,10 +66,10 @@
                                         :width tile-size
                                         :height tile-size}
                                 :on-click (handler-fn (put! out-chan {:type :stairs-down :position [x y]}))}
-     [:div.tile.scaled-image {:style {:background (str "url(roguelike_tileset.png) " sprite)
-                                      :transform (str "scale(" scale-factor ")")
+     [:div.tile.scaled-image {:style {:background (str "url(" monster-tiles ") " sprite)
+                                      :transform (transform-scale)
                                       :width img-size-x
-                                      :height img-size-y}}] "@"]))
+                                      :height img-size-y}}] ""]))
 
 
 

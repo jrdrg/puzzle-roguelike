@@ -1,6 +1,6 @@
 (ns puzzle-roguelike.state
   (:require [reagent.core :as reagent :refer [atom]]
-            [puzzle-roguelike.map :as map])) 
+            [puzzle-roguelike.map :as map]))
 
 
 (def initial-game-state {:running? true
@@ -33,7 +33,7 @@
       (update :tiles #(map/place-start-point % start-position))
       (map/add-enemies-to-map)
       (map/add-items-to-map)))
-  
+
 
 (defn create-initial-state
   "Helper method to create a new initial state with any required random initialization"

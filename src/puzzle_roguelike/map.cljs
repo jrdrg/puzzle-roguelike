@@ -7,31 +7,55 @@
 (def tile-keys  [:key :description :symbol :background :food-consumption :weight :sprite])
 
 (def tile-data [[:bounds      "out of bounds" "X"  "red"    1  0    (sprite-coords 7 0)]
-                [:stairs-down "stairs down"   ">"  "green"  1  0    (sprite-coords 3 0)]
+                [:stairs-down "stairs down"   ">"  "green"  1  0    (sprite-coords 1 2)]
                 [:stairs-up   "stairs up"     "<"  "green"  1  0    (sprite-coords 6 7)]
                 [:start-point "start"         "X"  "white"  1  0    (sprite-coords 7 4)]
-                [:empty       "a floor"       "."  "black"  1  8    (sprite-coords 1 0)] ;normal movement, 1 food
-                [:water       "water"         "~"  "blue"   1  1    (sprite-coords 7 2)] ;maybe can't cross? not sure yet
-                [:rocks       "rocks"         "*"  "#333"   1  2    (sprite-coords 12 3)] ;2 food
+                [:empty       "a floor"       "."  "black"  1  8    (sprite-coords 8 0)] ;normal movement, 1 food
+                [:water       "water"         "~"  "blue"   1  1    (sprite-coords 9 0)] ;maybe can't cross? not sure yet
+                [:rocks       "rocks"         "*"  "#333"   1  2    (sprite-coords 4 0)] ;2 food
                 ])
 
 (def entity-keys [:key :description :symbol :color :weight :sprite])
 
-(def entity-data [[:coin         "coin"          "$"  "yellow"  6  (sprite-coords 12 4)]
-                  [:moneybag     "money bag"     "$"  "yellow"  3  (sprite-coords 11 4)]
-                  [:hp           "hp +"          "H"  "red"     1  (sprite-coords 1 9)]
-                  [:atk          "atk +"         "A"  "blue"    2  (sprite-coords 2 3)]
-                  [:def          "def +"         "D"  "gray"    2  (sprite-coords 3 3)]
-                  [:food         "food"          "F"  "brown"   2  (sprite-coords 6 8)]
-                  [:key          "key"           "K"  "yellow"  1  (sprite-coords 2 2)]
-                  [:closed-chest "a chest"       "C"  "red"     1  (sprite-coords 0 8)]
-                  [:open-chest   "an open chest" "C"  "red"     0  (sprite-coords 1 8)]])
+(def entity-data [[:coin         "coin"          "$"  "yellow"  6  (sprite-coords 18 3)]
+                  [:moneybag     "money bag"     "$"  "yellow"  3  (sprite-coords 14 3)]
+                  [:hp           "hp +"          "H"  "red"     1  (sprite-coords 3 3)]
+                  [:atk          "atk +"         "A"  "blue"    2  (sprite-coords 1 0)]
+                  [:def          "def +"         "D"  "gray"    2  (sprite-coords 0 2)]
+                  [:food         "food"          "F"  "brown"   2  (sprite-coords 13 2)]
+                  [:key          "key"           "K"  "yellow"  1  (sprite-coords 7 3)]
+                  [:closed-chest "a chest"       "C"  "red"     1  (sprite-coords 5 12)]
+                  [:open-chest   "an open chest" "C"  "red"     0  (sprite-coords 6 12)]])
 
 
 (def enemy-keys [:key :description :symbol :color :sprite :level :hp :dmg :effect])
 
-(def enemy-data [[:bat    "bat"   "b"  "#559"       (sprite-coords 12 7)  1  2  1  :none]
-                 [:snake  "snake" "s"  "lightgreen" (sprite-coords 9 2)   1  5  2  {:poison 2}]])
+(def enemy-data [[:bat      "bat"       "b"  "#559"       (sprite-coords 6 4)  1  2  1   :none]
+                 [:snake    "snake"     "s"  "lightgreen" (sprite-coords 8 4)   1  5  2   {:poison 2}]
+                 [:goblin   "goblin"    "g"  "green"      (sprite-coords 1 10)   1  6  2   :none]
+                 [:ant      "ant"       "p"  "red"        (sprite-coords 7 6)   1  3  5   :none]
+                 [:skeleton "skeleton"  "s"  "white"      (sprite-coords 1 12)   2  8  4   :none]
+                 [:ratman   "ratman"    "m"  "brown"      (sprite-coords 7 12)  2  10 3   :none]
+                 [:shark    "shark"     "s"  "blue"       (sprite-coords 0 6)   2  13 5   :none]
+                 [:orc      "orc"       "o"  "green"      (sprite-coords 15 6)  3  25 10  :none]
+                 [:minotaur "minotaur"  "m"  "blue"       (sprite-coords 18 12)  4  40 15  :none]])
+
+;;(map #(hash-map (:key %) %) (map #(into (hash-map) (vec (map vector map/enemy-keys %))) map/enemy-data))
+
+(defn distance
+  "Manhattan distance between 2 points"
+  [[x1 y1] [x2 y2]]
+  (+ (Math/abs (- x1 x2)) (Math/abs (- y1 y2))))
+
+(defn valid-move?
+  "True if the given coordinates are a valid move from the current player position"
+  [x y [pos-x pos-y]]
+  (= 1 (distance [x y] [pos-x pos-y])))
+
+(defn stairs-down?
+  "True if the tile at [x y] is the stairs down"
+  [tile-map x y]
+  (-> (get-in tile-map [y x]) (:key) (= :stairs-down)))
 
 
 (defn- keys-and-data
@@ -66,7 +90,7 @@
 (defn get-random-map
   "Returns a random map"
   [tiles]
-  (let [tiles-without-stairs (->> tiles (drop 3))
+  (let [tiles-without-stairs (->> tiles (drop 4))
         [width height] map-size
         random-tile #(get-random-tile tiles-without-stairs)]
     (vec (for [y (range height)]
@@ -79,21 +103,6 @@
   [tiles x y]
   (get-in tiles [y x] (first (tile-map))))
 
-
-(defn distance
-  "Manhattan distance between 2 points"
-  [[x1 y1] [x2 y2]]
-  (+ (Math/abs (- x1 x2)) (Math/abs (- y1 y2))))
-
-(defn valid-move?
-  "True if the given coordinates are a valid move from the current player position"
-  [x y [pos-x pos-y]]
-  (= 1 (distance [x y] [pos-x pos-y])))
-
-(defn stairs-down?
-  "True if the tile at [x y] is the stairs down"
-  [tile-map x y]
-  (-> (get-in tile-map [y x]) (:key) (= :stairs-down)))
 
 
 (defn find-stairs-location
@@ -133,8 +142,8 @@
 
 (defn possible-tiles
   "Returns a list of tiles that are empty and can have something placed on them"
-  [state]
-  (maybe-something? (:tiles state) (:enemies state) (:position state)))
+  [{:keys [tiles enemies position]}]
+  (maybe-something? tiles enemies position))
 
 (defn random-list
   [state min-pct max-pct random-element]

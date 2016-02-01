@@ -199,7 +199,7 @@
       starved?
       (-> state
           (assoc :current-ui :game-over)
-          (assoc-in [:player :cause-of-death] "Hunger"))
+          (assoc-in [:player :cause-of-death] "hunger"))
 
       no-hp?
       (-> state
