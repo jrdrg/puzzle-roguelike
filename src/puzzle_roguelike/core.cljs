@@ -56,8 +56,8 @@
       (-> after-dmg
           (assoc-in [:player :cause-of-death] (:description enemy))
           (update-in [:player :hp] - total-enemy-dmg)
-          (display-message (str "Hit " (:description enemy) " for " dmg))
-          (display-message (str (:description enemy) " hits you for " total-enemy-dmg)))
+          (display-message (str "You hit the " (:description enemy) " for " dmg))
+          (display-message (str "The " (:description enemy) " hits you for " total-enemy-dmg)))
       )))
 
 (defn remove-item
