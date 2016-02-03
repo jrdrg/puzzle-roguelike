@@ -30,14 +30,14 @@
 
 (def enemy-keys [:key :description :symbol :color :sprite :level :hp :dmg :effect])
 
-(def enemy-data [[:bat      "bat"       "b"  "#559"       (sprite-coords 6 4)  1  2  1   :none]
-                 [:snake    "snake"     "s"  "lightgreen" (sprite-coords 8 4)   1  5  2   {:poison 2}]
+(def enemy-data [[:bat      "bat"       "b"  "#559"       (sprite-coords 6 4)    1  2  1   :none]
+                 [:snake    "snake"     "s"  "lightgreen" (sprite-coords 8 4)    1  5  2   {:poison 2}]
                  [:goblin   "goblin"    "g"  "green"      (sprite-coords 1 10)   1  6  2   :none]
-                 [:ant      "ant"       "p"  "red"        (sprite-coords 7 6)   1  3  5   :none]
+                 [:ant      "ant"       "p"  "red"        (sprite-coords 7 6)    1  3  5   :none]
                  [:skeleton "skeleton"  "s"  "white"      (sprite-coords 1 12)   2  8  4   :none]
-                 [:ratman   "ratman"    "m"  "brown"      (sprite-coords 7 12)  2  10 3   :none]
-                 [:shark    "shark"     "s"  "blue"       (sprite-coords 0 6)   2  13 5   :none]
-                 [:orc      "orc"       "o"  "green"      (sprite-coords 15 6)  3  25 10  :none]
+                 [:ratman   "ratman"    "m"  "brown"      (sprite-coords 7 12)   2  10 3   :none]
+                 [:shark    "shark"     "s"  "blue"       (sprite-coords 0 6)    2  13 5   :none]
+                 [:orc      "orc"       "o"  "green"      (sprite-coords 15 6)   3  25 10  :none]
                  [:minotaur "minotaur"  "m"  "blue"       (sprite-coords 18 12)  4  40 15  :none]])
 
 ;;(map #(hash-map (:key %) %) (map #(into (hash-map) (vec (map vector map/enemy-keys %))) map/enemy-data))
@@ -155,7 +155,9 @@
 
 (defn random-enemies-list
   [state]
-  (let [random-enemy #(assoc (rand-nth (enemy-map)) :animation {:pos 0})]
+  (let [floor (:floor state)
+        enemies-for-floor (filter #(<= (:level %) floor) (enemy-map))
+        random-enemy #(assoc (rand-nth enemies-for-floor) :animation {:pos 0})]
     (random-list state 0.2 0.4 (fn [i] {(:position i) (random-enemy)}))))
 
 (defn random-items-list
