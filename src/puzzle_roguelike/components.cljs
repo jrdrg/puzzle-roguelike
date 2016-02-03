@@ -105,9 +105,11 @@
    [:span.stat-header header]
    [:span.stat-value value]])
 
-(defn stats-view [player]
+(defn stats-view [player floor]
   (let []
     [:div.stats
+     [:div.floor-indicator (str "floor " floor)]
+
      [stat "hp" (str (:hp player) " / " (:max-hp player))]
      [stat "atk" (:atk player)]
      [stat "def" (:def player)]
@@ -131,18 +133,28 @@
     [:div.message-log
      (map message messages (map get-opacities (range msg-count 0 -1)))]))
 
-(defn game-over [player]
+(defn- final-stat
+  [header value]
+  [:div {:style {:width 500}}
+   [:span {:style {:color "red" :display "inline-block" :width 100 :text-align "right" :margin-right 20}} header]
+   [:span {:style {:display "inline-block" :width 300}} value]])
+
+(defn game-over [player floor]
   (let []
     [:div "Game Over"
-     [:div
-      [stat "Killed by" (:cause-of-death player)]]
+     [:div {:style {:margin-top 20 :margin-bottom 20}}
+      [final-stat "killed by" (:cause-of-death player)]
+      [final-stat "floor" floor]
+      [final-stat "level" (:level player)]
+      [final-stat "gold" (:gold player)]
+      ]
      [:button {:on-click (handler-fn (state/initialize!))} "try again"]
      ]))
 
 (defn game-play
-  [events-chan player tiles enemies items position messages]
+  [events-chan player floor tiles enemies items position messages]
   [:div {:style {:display "flex" :flex-direction "column" :width "100%"}}
    [:div.game-wrapper
     [map-view tiles enemies items position events-chan]
-    [stats-view player]]
+    [stats-view player floor]]
    [message-log messages]])

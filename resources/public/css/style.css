@@ -3,7 +3,7 @@
 body {
     font-family: Lora;
     background: #333;
-    color: white;
+    color: wheat;
     font-size: 18px;
 }
 
@@ -24,7 +24,8 @@ body {
     width: 50%;
     max-width: 800px;
     height: 100%;
-    background: gray;
+    /* background: gray; */
+    background: black;
 }
 
 .tileset-link {
@@ -44,6 +45,12 @@ body {
     flex-basis: 100px;
     display: flex;
     align-items: center;
+}
+
+.floor-indicator {
+    background: #333;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 .stats {
@@ -69,11 +76,12 @@ body {
     flex: 1;
     flex-grow: 0;
     flex-basis: 210px;
-    border: 2px solid white;
+    /* border: 2px solid white; */
     margin-top: 10px;
     width: 100%;
     box-sizing: border-box;
-    background: darkslategray;
+    /* background: darkslategray; */
+    background: black;
     padding: 5px;
 }
 
@@ -81,7 +89,7 @@ body {
     flex: 1;
     flex-grow: 0;
     position: relative;
-    border: 2px solid white;
+    /* border: 2px solid white; */
     background-color: black;
 }
 

@@ -228,13 +228,13 @@
 
 
 (defn display-ui
-   [player tiles enemies items position messages]
+  [{:keys [player floor tiles enemies items position messages]}]
   (condp = (:current-ui @game-state)
     :main
-    [c/game-play events-chan player tiles enemies items position messages]
+    [c/game-play events-chan player floor tiles enemies items position (take 8 messages)]
 
     :game-over
-    [c/game-over player]))
+    [c/game-over player floor]))
 
 
 (defn game-container
@@ -251,8 +251,9 @@
           messages (take 8 (:messages @game-state))]
       [:div.container
        [:div.title "this game has no title"]
-       [display-ui player tiles enemies items, position messages]
-       [:a.tileset-link {:href "http://makegames.tumblr.com/post/41267990744/before-spelunky-i-started-a-simple-little"} "Tileset images from here"]
+       [display-ui @game-state]
+       ;; [:a.tileset-link {:href "http://makegames.tumblr.com/post/41267990744/before-spelunky-i-started-a-simple-little"} "Tileset images from here"]
+       [:a.tileset-link {:href "http://oryxdesignlab.com/ultimate/"} "Tileset images from here"]
        ])))
 
 
